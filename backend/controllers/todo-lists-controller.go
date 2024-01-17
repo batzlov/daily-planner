@@ -40,7 +40,7 @@ func GetTodoListById(context *gin.Context) {
 	currentUser := utils.GetCurrentUser(context)
 
 	var todoList models.TodoList
-	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).Find(&todoList)
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).Preload("Todos").Find(&todoList)
 
 	if todoList.ID == 0  {
 		context.JSON(http.StatusNotFound, gin.H {
@@ -178,6 +178,75 @@ func DeleteTodoList(context *gin.Context) {
 	initializers.DATABASE.Delete(&todoListToDelete)
 
 	context.JSON(http.StatusOK, gin.H {})
+}
+
+func ReorderTodoList(context *gin.Context) {
+	var params struct {
+		TodoListId 	uint `uri:"todoListId" binding:"required"`
+	}
+	var body struct {
+		Todos 		[]models.Todo `form:"todos" binding:"required,nn"`
+	}
+
+	paramsErr := context.ShouldBindUri(&params)
+	if paramsErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-uri",
+			"message": "Invalid uri, please check the provided uri.",
+			"details": paramsErr.Error(),
+		})
+		
+		return
+	}
+
+	bodyErr := context.ShouldBindJSON(&body)
+	if bodyErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-body",
+			"message": "Invalid body, please check the provided data.",
+			"details": bodyErr.Error(),
+		})
+		
+		return
+	}
+
+	currentUser := utils.GetCurrentUser(context)
+	var todoListToUpdate models.TodoList
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).Preload("Todos").First(&todoListToUpdate)
+
+	if todoListToUpdate.ID == 0 {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	if len(body.Todos) != len(todoListToUpdate.Todos) {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-body",
+			"message": "Invalid body, please check the provided data.",
+			"details": "The number of todos in the body does not match the number of todos in the database.",
+		})
+		
+		return	
+	}
+
+	for _, todo := range body.Todos {
+		for secondIndex, todoToUpdate := range todoListToUpdate.Todos {
+			if todo.ID == todoToUpdate.ID {
+				todoListToUpdate.Todos[secondIndex].Order = todo.Order
+			}
+		}
+	}
+
+	initializers.DATABASE.Save(&todoListToUpdate)
+
+	context.JSON(http.StatusOK, gin.H {
+		"data": todoListToUpdate,
+	})
 }
 
 func ShareTodoListWith(context *gin.Context) {}
