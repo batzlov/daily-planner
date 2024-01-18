@@ -1,6 +1,8 @@
 "use client";
 
 import DashboardNav from "@/components/dashboard-nav";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
     Card,
     CardContent,
@@ -9,6 +11,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -20,6 +23,7 @@ import UpdateTodoList from "./update-todo-list";
 
 export default function Dashboard() {
     const router = useRouter();
+    const { toast } = useToast();
     const { state: authState, dispatch } = useAuthContext();
     const [todoLists, setTodoLists] = useState<any>([]);
     const { data, error, isLoading } = useSWR(
@@ -50,7 +54,7 @@ export default function Dashboard() {
                     </div>
                     <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                         {data &&
-                            data.map((todoList: any) => (
+                            data.todoLists.map((todoList: any) => (
                                 <Card
                                     key={todoList.id}
                                     className="transistion duration-400 ease-in-out hover:bg-secondary hover:cursor-pointer"
@@ -74,14 +78,77 @@ export default function Dashboard() {
                                         <CardContent>
                                             <p>
                                                 Aktuell befinden sich{" "}
-                                                {todoList.todos.length} Todos in
-                                                dieser Liste.
+                                                {todoList?.todos?.length} Todos
+                                                in dieser Liste.
                                             </p>
                                         </CardContent>
                                     </div>
                                     <CardFooter className="flex justify-end space-x-2">
                                         <DeleteTodoList todoList={todoList} />
                                         <UpdateTodoList todoList={todoList} />
+                                    </CardFooter>
+                                </Card>
+                            ))}
+                        {data &&
+                            data.sharedTodoLists.map((todoList: any) => (
+                                <Card
+                                    key={todoList.id}
+                                    className="transistion duration-400 ease-in-out hover:bg-secondary hover:cursor-pointer"
+                                >
+                                    <div
+                                        onClick={() => {
+                                            router.push(
+                                                `/todo-lists/${todoList.id}`
+                                            );
+                                        }}
+                                    >
+                                        <CardHeader>
+                                            <Badge className="w-fit ms-auto">
+                                                shared
+                                            </Badge>
+                                            <CardTitle>
+                                                {todoList.title}
+                                            </CardTitle>
+                                            <CardDescription>
+                                                Lorem ipsum dolor sit amet
+                                                consectetur
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p>
+                                                Aktuell befinden sich{" "}
+                                                {todoList?.todos?.length} Todos
+                                                in dieser Liste.
+                                            </p>
+                                        </CardContent>
+                                    </div>
+                                    <CardFooter className="flex justify-end space-x-2">
+                                        <Button
+                                            className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
+                                            variant="outline"
+                                            onClick={() => {
+                                                toast({
+                                                    title: "Upsi :(",
+                                                    description:
+                                                        "Aktuell können geteilte Listen nur durch den Ersteller gelöscht werden",
+                                                });
+                                            }}
+                                        >
+                                            löschen
+                                        </Button>
+                                        <Button
+                                            className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
+                                            variant="outline"
+                                            onClick={() => {
+                                                toast({
+                                                    title: "Upsi :(",
+                                                    description:
+                                                        "Aktuell können geteilte Listen nur durch den Ersteller bearbeiten werden",
+                                                });
+                                            }}
+                                        >
+                                            bearbeiten
+                                        </Button>
                                     </CardFooter>
                                 </Card>
                             ))}

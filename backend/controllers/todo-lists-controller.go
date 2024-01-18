@@ -46,8 +46,7 @@ func GetTodoListById(context *gin.Context) {
 	currentUser := utils.GetCurrentUser(context)
 
 	var todoList models.TodoList
-	initializers.DATABASE.Where("id = ? AND created_by = ? AND deleted", params.TodoListId, currentUser.ID, false).Preload("Todos").Find(&todoList)
-
+	initializers.DATABASE.Where("id = ? AND deleted = ?", params.TodoListId, false).Preload("SharedWith").Preload("Todos").Find(&todoList)
 	if todoList.ID == 0  {
 		context.JSON(http.StatusNotFound, gin.H {
 			"code": "not-found",
@@ -56,6 +55,26 @@ func GetTodoListById(context *gin.Context) {
 		})
 
 		return
+	}
+
+	if todoList.CreatedBy != currentUser.ID {
+		// check if the current user is shared with the todo list
+		sharedWithCurrentUser := false
+		for _, user := range todoList.SharedWith {
+			if user.ID == currentUser.ID {
+				sharedWithCurrentUser = true
+			}
+		}
+
+		if !sharedWithCurrentUser {
+			context.JSON(http.StatusForbidden, gin.H {
+				"code": "forbidden",
+				"message": "You are not allowed to access this TodoList.",
+				"details": nil,
+			})
+
+			return
+		}
 	}
 
 	context.JSON(http.StatusOK, gin.H {
@@ -96,7 +115,6 @@ func UpdateTodoList(context *gin.Context) {
 	}
 	var body struct {
 		Title 		string `form:"title" binding:"required,min=3,max=64"`
-		Deleted 	bool   `form:"deleted" binding:"required"`
 	}
 
 	// first of all check for valid uri parameters
