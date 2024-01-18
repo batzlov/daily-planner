@@ -1,6 +1,9 @@
+"use client";
+
 import { useAuthContext } from "@/hooks/use-auth-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -18,6 +21,20 @@ export default function DashboardNav() {
     const router = useRouter();
     const { state, dispatch } = useAuthContext();
 
+    const [email, setEmail] = useState<string>("");
+    const [initials, setInitials] = useState<string>("");
+    const [userName, setUserName] = useState<string>("");
+
+    useEffect(() => {
+        if (state.user && state.user.email) {
+            setEmail(state.user.email);
+            setInitials(
+                state.user.firstName.charAt(0) + state.user.lastName.charAt(0)
+            );
+            setUserName(state.user.firstName + " " + state.user.lastName);
+        }
+    }, [state]);
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -26,11 +43,7 @@ export default function DashboardNav() {
                     className="relative h-8 w-8 rounded-full"
                 >
                     <Avatar className="h-9 w-9">
-                        {/* <AvatarImage
-                            src="/avatars/03.png"
-                            alt="@shadcn"
-                        /> */}
-                        <AvatarFallback>SC</AvatarFallback>
+                        <AvatarFallback>{initials}</AvatarFallback>
                     </Avatar>
                 </Button>
             </DropdownMenuTrigger>
@@ -41,9 +54,11 @@ export default function DashboardNav() {
             >
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">user</p>
+                        <p className="text-sm font-medium leading-none">
+                            {userName}
+                        </p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            user@example.com
+                            {email}
                         </p>
                     </div>
                 </DropdownMenuLabel>

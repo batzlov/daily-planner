@@ -14,24 +14,24 @@ import * as React from "react";
 import { useSWRConfig } from "swr";
 import wretch from "wretch";
 
-interface DeleteTodoListProps {
-    todoList: {
+interface DeleteCategoryProps {
+    category: {
         id: number;
         title: string;
     };
 }
 
-export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
+export default function DeleteCategory({ category }: DeleteCategoryProps) {
     const { mutate } = useSWRConfig();
 
     const { state, dispatch } = useAuthContext();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
 
-    async function deleteTodoList() {
+    async function deleteCategory() {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists/${todoList.id}`)
+        wretch(`http://localhost:3001/categories/${category.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -40,7 +40,7 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
             .delete()
             .res(async (res: any) => {
                 setOpen(false);
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate(["http://localhost:3001/categories", state.jwt]);
             })
             .catch((error) => {
                 console.error(error);
@@ -66,8 +66,8 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
                 <DialogHeader>
                     <DialogTitle>Liste löschen</DialogTitle>
                     <DialogDescription>
-                        Bist du dir sicher das du die Liste "{todoList.title}"
-                        löschen möchtest?
+                        Bist du dir sicher das du die Kategorie "
+                        {category.title}" löschen möchtest?
                     </DialogDescription>
                 </DialogHeader>
 
@@ -84,7 +84,7 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
                     <Button
                         type="submit"
                         disabled={isLoading}
-                        onClick={deleteTodoList}
+                        onClick={deleteCategory}
                     >
                         löschen
                     </Button>

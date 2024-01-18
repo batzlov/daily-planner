@@ -26,18 +26,18 @@ import { useSWRConfig } from "swr";
 import wretch from "wretch";
 import * as z from "zod";
 
-interface UpdateTodoListProps {
-    todoList: {
+interface UpdateCategoryProps {
+    category: {
         id: number;
         title: string;
     };
 }
 
-export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
+export default function UpdateCategory({ category }: UpdateCategoryProps) {
     const { mutate } = useSWRConfig();
 
     const [open, setOpen] = React.useState(false);
-    const updateTodoListSchema = z.object({
+    const updateCategorySchema = z.object({
         title: z.string().min(2, {
             message: "Der Name muss mindestens 2 Zeichen lang sein",
         }),
@@ -47,18 +47,18 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
 
     const { state, dispatch } = useAuthContext();
 
-    type UpdateTodoListSchemaType = z.infer<typeof updateTodoListSchema>;
-    const form = useForm<UpdateTodoListSchemaType>({
-        resolver: zodResolver(updateTodoListSchema),
+    type UpdateCategorySchemaType = z.infer<typeof updateCategorySchema>;
+    const form = useForm<UpdateCategorySchemaType>({
+        resolver: zodResolver(updateCategorySchema),
         defaultValues: {
-            title: todoList.title,
+            title: category.title,
         },
     });
 
-    async function onSubmit(values: UpdateTodoListSchemaType) {
+    async function onSubmit(values: UpdateCategorySchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists/${todoList.id}`)
+        wretch(`http://localhost:3001/categories/${category.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -70,7 +70,7 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate(["http://localhost:3001/categories", state.jwt]);
             })
             .catch((error) => {
                 console.error(error);
@@ -94,9 +94,9 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Liste bearbeiten</DialogTitle>
+                    <DialogTitle>Kategorie bearbeiten</DialogTitle>
                     <DialogDescription>
-                        Wähle einen passenden Namen für deine Todo-Liste und
+                        Wähle einen passenden Namen für deine Kategorie und
                         klicke auf speichern.
                     </DialogDescription>
                 </DialogHeader>

@@ -52,7 +52,7 @@ export default function TodoLists() {
                     <div className="flex justify-end">
                         <CreateTodoList />
                     </div>
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                         {data &&
                             data.todoLists.map((todoList: any) => (
                                 <Card

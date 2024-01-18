@@ -14,6 +14,8 @@ import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
 import { useState } from "react";
 import useSWR from "swr";
+import DeleteCategory from "./delete-category";
+import UpdateCategory from "./update-category";
 
 export default function Categories() {
     const { toast } = useToast();
@@ -23,6 +25,8 @@ export default function Categories() {
         ["http://localhost:3001/categories", authState.jwt],
         ([url, jwt]) => fetcher(url, jwt)
     );
+
+    console.log(authState);
 
     return (
         <>
@@ -34,7 +38,7 @@ export default function Categories() {
                         </h2>
                         <p className="text-muted-foreground">
                             Hier ist eine Übersicht über deine verschiedenen
-                            Todo-Listen.
+                            Kategorien.
                         </p>
                     </div>
                     <div className="flex items-center space-x-2">
@@ -50,7 +54,7 @@ export default function Categories() {
                             data.map((category: any) => (
                                 <Card
                                     key={category.id}
-                                    className="transistion duration-400 ease-in-out hover:bg-secondary hover:cursor-pointer"
+                                    className="transistion duration-400 ease-in-out hover:bg-secondary"
                                 >
                                     <CardHeader>
                                         <CardTitle>{category.title}</CardTitle>
@@ -61,12 +65,8 @@ export default function Categories() {
                                     </CardHeader>
 
                                     <CardFooter className="flex justify-end space-x-2">
-                                        <Button variant="outline">
-                                            löschen
-                                        </Button>
-                                        <Button variant="outline">
-                                            bearbeiten
-                                        </Button>
+                                        <DeleteCategory category={category} />
+                                        <UpdateCategory category={category} />
                                     </CardFooter>
                                 </Card>
                             ))}

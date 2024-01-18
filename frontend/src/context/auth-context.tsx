@@ -5,9 +5,11 @@ import { createContext, useEffect, useReducer } from "react";
 export const AuthStateContext = createContext<any>(null);
 export const AuthDispatchContext = createContext<any>(null);
 
-type AuthState = { isLoggedIn: boolean; jwt: string };
+type AuthState = { isLoggedIn: boolean; jwt: string; user: any };
 
-type AuthAction = { type: "signin"; jwt: string } | { type: "signout" };
+type AuthAction =
+    | { type: "signin"; jwt: string; user: any }
+    | { type: "signout" };
 
 export const authReducer = (
     state: AuthState,
@@ -18,9 +20,10 @@ export const authReducer = (
             return {
                 isLoggedIn: true,
                 jwt: action.jwt,
+                user: action.user,
             };
         case "signout":
-            return { isLoggedIn: false, jwt: "" };
+            return { isLoggedIn: false, jwt: "", user: {} };
         default:
             return state;
     }
@@ -34,13 +37,15 @@ export const AuthContextProvider = ({ children }: AuthContextProviderProps) => {
     const [state, dispatch] = useReducer(authReducer, {
         isLoggedIn: false,
         jwt: "",
+        user: {},
     });
 
     useEffect(() => {
         const jwt = localStorage.getItem("jwt");
+        const user = JSON.parse(localStorage.getItem("user")!);
 
         if (jwt !== "") {
-            dispatch({ type: "signin", jwt: jwt! });
+            dispatch({ type: "signin", jwt: jwt!, user: user! });
         }
     }, []);
 

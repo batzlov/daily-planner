@@ -26,18 +26,11 @@ import { useSWRConfig } from "swr";
 import wretch from "wretch";
 import * as z from "zod";
 
-interface UpdateTodoListProps {
-    todoList: {
-        id: number;
-        title: string;
-    };
-}
-
-export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
+export default function CreateTodoList() {
     const { mutate } = useSWRConfig();
 
     const [open, setOpen] = React.useState(false);
-    const updateTodoListSchema = z.object({
+    const createCategorySchema = z.object({
         title: z.string().min(2, {
             message: "Der Name muss mindestens 2 Zeichen lang sein",
         }),
@@ -47,30 +40,29 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
 
     const { state, dispatch } = useAuthContext();
 
-    type UpdateTodoListSchemaType = z.infer<typeof updateTodoListSchema>;
-    const form = useForm<UpdateTodoListSchemaType>({
-        resolver: zodResolver(updateTodoListSchema),
+    type CreateCategorySchemaType = z.infer<typeof createCategorySchema>;
+    const form = useForm<CreateCategorySchemaType>({
+        resolver: zodResolver(createCategorySchema),
         defaultValues: {
-            title: todoList.title,
+            title: "",
         },
     });
 
-    async function onSubmit(values: UpdateTodoListSchemaType) {
+    async function onSubmit(values: CreateCategorySchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists/${todoList.id}`)
+        wretch(`http://localhost:3001/todo-lists`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
                 },
             })
-            .put(values)
+            .post(values)
             .res(async (res: any) => {
                 console.log(res);
                 setOpen(false);
                 form.reset();
-                form.setValue("title", values.title);
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate(["http://localhost:3001/categories", state.jwt]);
             })
             .catch((error) => {
                 console.error(error);
@@ -85,18 +77,13 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
             onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
-                <Button
-                    className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
-                    variant="outline"
-                >
-                    bearbeiten
-                </Button>
+                <Button>Kategorie erstellen</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Liste bearbeiten</DialogTitle>
+                    <DialogTitle>Erstelle eine neue Kategorie</DialogTitle>
                     <DialogDescription>
-                        Wähle einen passenden Namen für deine Todo-Liste und
+                        Wähle einen passenden Namen für deine neue Kategorie und
                         klicke auf speichern.
                     </DialogDescription>
                 </DialogHeader>

@@ -54,22 +54,6 @@ export default function SignIn({ className, ...props }: SignInProps) {
         },
     });
 
-    async function checkForCookie() {
-        wretch(`http://localhost:3001/todo-lists`)
-            .options({
-                headers: {
-                    Authorization: `Bearer ${cookie}`,
-                },
-            })
-            .get()
-            .res((res: any) => {
-                console.log(res);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    }
-
     async function onSubmit(values: SignInSchemaType) {
         setIsLoading(true);
 
@@ -80,11 +64,13 @@ export default function SignIn({ className, ...props }: SignInProps) {
 
                 // FIXME: jwts should not be stored in localStorage in production
                 localStorage.setItem("jwt", body.jwt);
+                localStorage.setItem("user", JSON.stringify(body.user));
 
                 // update the auth context
                 dispatch({
                     type: "signin",
                     jwt: body.jwt,
+                    user: body.user,
                 });
 
                 router.push("/todo-lists");
