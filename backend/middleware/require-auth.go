@@ -41,19 +41,20 @@ func RequireAuth(context *gin.Context) {
 			context.AbortWithStatus(http.StatusUnauthorized)
 			return;
 		}
-		
-		fmt.Println("using jwt auth")
-	} else {
-		fmt.Println("using cookie auth")
 	}
 
-	token, _ := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {	
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 		
 		return []byte(os.Getenv("SECRET")), nil
 	})
+
+	if err != nil {
+		context.AbortWithStatus(http.StatusUnauthorized)
+		return;
+	}
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		if time.Now().Unix() > int64(claims["expiresAt"].(float64)) {

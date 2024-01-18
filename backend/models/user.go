@@ -8,6 +8,6 @@ type User struct {
 	LastName 					string 		`gorm:"not null" json:"lastName"`
 	Password 					string 		`gorm:"not null" json:"password"`
 
-	TodoLists 					[]TodoList  `gorm:"foreignKey:CreatedBy" json:"todoLists"`
-	// SharedTodoLists 			[]*TodoList `gorm:"many2many:todoList_user;" json:"sharedTodoLists"`
+	TodoLists 					[]TodoList   `gorm:"foreignKey:CreatedBy" json:"todoLists"`
+	SharedTodoLists 			[]*TodoList  `gorm:"many2many:share_todo_list_with_users;" json:"sharedTodoLists"`
 }

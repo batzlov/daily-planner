@@ -7,5 +7,6 @@ func SyncDatabase() {
 		&models.User{}, 
 		&models.TodoList{}, 
 		&models.Todo{},
+		&models.Category{},
 	)
 }

@@ -15,10 +15,16 @@ func GetTodoLists(context *gin.Context) {
 	currentUser := utils.GetCurrentUser(context)
 	
 	var todoLists []models.TodoList
-	initializers.DATABASE.Where("created_by = ?", currentUser.ID).Preload("Todos").Find(&todoLists)
+	var sharedTodoLists []models.TodoList
+
+	initializers.DATABASE.Where("created_by = ? AND deleted = ?", currentUser.ID, false).Find(&todoLists)
+	initializers.DATABASE.Model(&currentUser).Association("SharedTodoLists").Find(&sharedTodoLists)
 
 	context.JSON(http.StatusOK, gin.H {
-		"data": todoLists,
+		"data": gin.H {
+			"todoLists": todoLists,
+			"sharedTodoLists": sharedTodoLists,
+		},
 	})
 }
 
@@ -40,7 +46,7 @@ func GetTodoListById(context *gin.Context) {
 	currentUser := utils.GetCurrentUser(context)
 
 	var todoList models.TodoList
-	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).Preload("Todos").Find(&todoList)
+	initializers.DATABASE.Where("id = ? AND created_by = ? AND deleted", params.TodoListId, currentUser.ID, false).Preload("Todos").Find(&todoList)
 
 	if todoList.ID == 0  {
 		context.JSON(http.StatusNotFound, gin.H {
@@ -90,6 +96,7 @@ func UpdateTodoList(context *gin.Context) {
 	}
 	var body struct {
 		Title 		string `form:"title" binding:"required,min=3,max=64"`
+		Deleted 	bool   `form:"deleted" binding:"required"`
 	}
 
 	// first of all check for valid uri parameters
@@ -175,7 +182,8 @@ func DeleteTodoList(context *gin.Context) {
 		return
 	}
 
-	initializers.DATABASE.Delete(&todoListToDelete)
+	todoListToDelete.Deleted = true
+	initializers.DATABASE.Save(&todoListToDelete)
 
 	context.JSON(http.StatusOK, gin.H {})
 }
@@ -249,5 +257,96 @@ func ReorderTodoList(context *gin.Context) {
 	})
 }
 
-func ShareTodoListWith(context *gin.Context) {}
-func UnshareTodoListWith(context *gin.Context) {}
+func ShareTodoListWith(context *gin.Context) {
+	var params struct {
+		TodoListId 	uint `uri:"todoListId" binding:"required"`
+		UserId 		uint `uri:"userId" binding:"required"`
+	}
+
+	paramsErr := context.ShouldBindUri(&params)
+	if paramsErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-uri",
+			"message": "Invalid uri, please check the provided uri.",
+			"details": paramsErr.Error(),
+		})
+		
+		return
+	}
+
+	currentUser := utils.GetCurrentUser(context)
+	var todoListToShare models.TodoList
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).First(&todoListToShare)
+	if(todoListToShare.ID == 0) {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	var userToShareWith models.User
+	initializers.DATABASE.Where("id = ?", params.UserId).First(&userToShareWith)
+	if(userToShareWith.ID == 0) {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No User found with the given id: %d", params.UserId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
+
+	context.JSON(http.StatusOK, gin.H {})
+}
+
+func UnshareTodoListWith(context *gin.Context) {
+	var params struct {
+		TodoListId 	uint `uri:"todoListId" binding:"required"`
+		UserId 		uint `uri:"userId" binding:"required"`
+	}
+
+	paramsErr := context.ShouldBindUri(&params)
+	if paramsErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-uri",
+			"message": "Invalid uri, please check the provided uri.",
+			"details": paramsErr.Error(),
+		})
+		
+		return
+	}
+
+	currentUser := utils.GetCurrentUser(context)
+	var todoListToUnshare models.TodoList
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).First(&todoListToUnshare)
+	if(todoListToUnshare.ID == 0) {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	var userToUnshareWith models.User
+	initializers.DATABASE.Where("id = ?", params.UserId).First(&userToUnshareWith)
+	if(userToUnshareWith.ID == 0) {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No User found with the given id: %d", params.UserId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	initializers.DATABASE.Model(&todoListToUnshare).Association("SharedWith").Delete(&userToUnshareWith)
+
+	context.JSON(http.StatusOK, gin.H {})
+}

@@ -134,31 +134,30 @@ func UpdateTodo(context *gin.Context) {
 }
 
 func DeleteTodo(context *gin.Context) {
-	todoListId := utils.StringToUint(context.Param("id"))
-	todoId := utils.StringToUint(context.Param("todoId"))
+	var params models.DeleteTodoParams
+	paramsErr := context.ShouldBindUri(&params)
+	if(paramsErr != nil) {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-parameters",
+			"message": "Invalid parameters, please check the provided data.",
+			"details": paramsErr.Error(),
+		})
+	}
 
 	var todoToDelete models.Todo
-	result := initializers.DATABASE.Where("id = ? AND todo_list_id = ?", todoId, todoListId).First(&todoToDelete)
+	result := initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).First(&todoToDelete)
 
 	if result.Error != nil {
 		context.JSON(http.StatusNotFound, gin.H {
-			"code": 8,
-			"message": "Todo not found.",
+			"code": "not-found",
+			"message": fmt.Sprintf("No Todo found with the given id: %d", params.TodoId),
+			"details": nil,
 		})
 
 		return
 	}
 
-	result = initializers.DATABASE.Delete(&todoToDelete)
-
-	if result.Error != nil {
-		context.JSON(http.StatusBadRequest, gin.H {
-			"code": 8,
-			"message": "Failed to delete todo.",
-		})
-
-		return
-	}
+	initializers.DATABASE.Delete(&todoToDelete)
 
 	context.JSON(http.StatusOK, gin.H {})
 }
