@@ -21,7 +21,7 @@ import CreateTodoList from "./create-todo-list";
 import DeleteTodoList from "./delete-todo-list";
 import UpdateTodoList from "./update-todo-list";
 
-export default function Dashboard() {
+export default function TodoLists() {
     const router = useRouter();
     const { toast } = useToast();
     const { state: authState, dispatch } = useAuthContext();

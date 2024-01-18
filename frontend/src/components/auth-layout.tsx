@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <div className="bg-primary hidden lg:block lg:col-span-5 2xl:col-span-4">
                 <div className="flex flex-col items-center justify-center h-full px-10">
                     <div className="text-5xl font-bold text-white text-center">
-                        "The best thing money can buy is time."
+                        "Organizing is a journey, not a destination."
                     </div>
                     <div className="pt-2 text-2xl font-bold text-white w-full text-right">
                         Unknown Author

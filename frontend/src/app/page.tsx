@@ -1,6 +1,8 @@
 "use client";
-
 import MainNav from "@/components/main-nav";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Rocket } from "lucide-react";
 
 export default function Home() {
     return (
@@ -8,24 +10,39 @@ export default function Home() {
             <MainNav></MainNav>
             <main
                 role="main"
-                className="hero-section flex justify-center items-center"
+                className="hero-section flex justify-center text-center"
             >
-                <div className="max-w-5xl m-5">
-                    <h1 className="text-4xl">
-                        Mit dem{" "}
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-indigo-600">
-                            Daily Planner
-                        </span>{" "}
-                        werden deine Aufgaben und du, ein Dream-Team wie aus dem
-                        Bilderbuch.
+                <div className="max-w-5xl mt-64 mx-5">
+                    <Badge
+                        variant="secondary"
+                        className="inline-block mb-6 text-md"
+                    >
+                        Heute kündigen wir die Revolution in der Todo-Welt an
+                        <Rocket
+                            className="inline-block ml-2"
+                            size={24}
+                        />
+                    </Badge>
+                    <h1 className="text-5xl font-extrabold">
+                        Keiner kann sich alles merken? Musst du auch garnicht!
                     </h1>
 
-                    <p className="mt-4 text-lg">
-                        Hast du es auch langsam satt, dass du deine Aufgaben
-                        einfach immer weiter vor dir herschiebst anstatt sie
-                        endlich abzuarbeiten? Mit dem Daily Planner gehört
-                        dieses Verhalten nun endlich der Vergangenheit an!
+                    <p className="mt-4 text-xl text-muted-foreground">
+                        Mit dem Daily Planner kannst du nicht nur kinderleicht
+                        Todo-Listen erstellen, sondern diese auch ganz einfach
+                        mit anderen Nutzer:innen teilen.
                     </p>
+                    <div className="mt-6">
+                        <Button className="px-10 py-6 me-2">
+                            Jetzt loslegen
+                        </Button>
+                        <Button
+                            className="px-10 py-6 ms-2"
+                            variant="outline"
+                        >
+                            Mehr erfahren
+                        </Button>
+                    </div>
                 </div>
             </main>
         </>

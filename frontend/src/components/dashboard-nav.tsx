@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/hooks/use-auth-context";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -40,23 +41,19 @@ export default function DashboardNav() {
             >
                 <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                            shadcn
-                        </p>
+                        <p className="text-sm font-medium leading-none">user</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            m@example.com
+                            user@example.com
                         </p>
                     </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem disabled>
-                        Profil bearbeiten
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    <DropdownMenuItem asChild>
+                        <Link href="/todo-lists">Todo-Listen</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem disabled>
-                        Einstellungen
-                        <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                    <DropdownMenuItem asChild>
+                        <Link href="/categories">Todo-Kategorien</Link>
                     </DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />

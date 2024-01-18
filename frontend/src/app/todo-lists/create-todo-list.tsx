@@ -77,7 +77,7 @@ export default function CreateTodoList() {
             onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
-                <Button>Neue Liste erstellen</Button>
+                <Button>Liste erstellen</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

@@ -4,7 +4,7 @@ type Category struct {
 	GormModel
 	Title     			string 		`gorm:"not null" json:"title"`
 
-	CreatedBy 			uint   		`gorm:"not null" json:"createdBy"`
+	CreatedBy 			uint   		`json:"createdBy"`
 }
 
 type CreateCategoryBody struct {
