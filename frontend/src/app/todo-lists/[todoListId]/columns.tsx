@@ -8,7 +8,6 @@ import {
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuLabel,
-    DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
@@ -16,7 +15,8 @@ export type Todo = {
     id: number;
     title: string;
     description: string;
-    isCompleted: boolean;
+    completed: boolean;
+    parentTodoListId: number;
 };
 
 export const columns: ColumnDef<Todo>[] = [
@@ -33,10 +33,10 @@ export const columns: ColumnDef<Todo>[] = [
         header: "Beschreibung",
     },
     {
-        accessorKey: "isCompleted",
+        accessorKey: "completed",
         header: "Abgeschlossen",
         cell: ({ row }) => {
-            const badeText = row.getValue("isCompleted") ? "Ja" : "Nein";
+            const badeText = row.getValue("completed") ? "Ja" : "Nein";
 
             return <Badge>{badeText}</Badge>;
         },
@@ -56,13 +56,9 @@ export const columns: ColumnDef<Todo>[] = [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                        <DropdownMenuItem>Copy payment ID</DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>View customer</DropdownMenuItem>
-                        <DropdownMenuItem>
-                            View payment details
-                        </DropdownMenuItem>
+                        <DropdownMenuLabel>Optionen</DropdownMenuLabel>
+                        <DropdownMenuItem>Todo löschen</DropdownMenuItem>
+                        <DropdownMenuItem>Todo bearbeiten</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

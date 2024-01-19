@@ -72,19 +72,19 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
     const form = useForm<CreateTodoSchemaType>({
         resolver: zodResolver(createTodoSchema),
         defaultValues: {
-            title: "AAA",
-            description: "AAA",
+            title: "",
+            description: "",
             completed: false,
         },
     });
 
     async function onSubmit(values: CreateTodoSchemaType) {
         // change category string to category id
-        const updatedValues = { ...values };
+        const updatedValues = { ...values, categoryId: null };
         const categoryId = categoryData?.find(
             (category: any) => category.title === values.category
         );
-        updatedValues.category = categoryId?.id;
+        updatedValues.categoryId = categoryId?.id;
 
         wretch(`http://localhost:3001/todo-lists/${todoListId}/todos`)
             .options({
@@ -92,7 +92,7 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
                     Authorization: `Bearer ${authState.jwt}`,
                 },
             })
-            .post(values)
+            .post(updatedValues)
             .res(async (res: any) => {
                 console.log(res);
                 setOpen(false);
@@ -145,7 +145,7 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
                             />
                             <FormField
                                 control={form.control}
-                                name="title"
+                                name="description"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Beschreibung</FormLabel>

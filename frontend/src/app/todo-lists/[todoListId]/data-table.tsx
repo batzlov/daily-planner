@@ -76,7 +76,7 @@ export default function DataTable<TData, TValue>({
                                 colSpan={columns.length}
                                 className="h-24 text-center"
                             >
-                                No results.
+                                Bis jetzt hat diese Liste noch keine Todos.
                             </TableCell>
                         </TableRow>
                     )}
