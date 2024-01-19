@@ -26,7 +26,7 @@ import { useSWRConfig } from "swr";
 import wretch from "wretch";
 import * as z from "zod";
 
-export default function CreateTodoList() {
+export default function CreateCategory() {
     const { mutate } = useSWRConfig();
 
     const [open, setOpen] = React.useState(false);
@@ -77,7 +77,13 @@ export default function CreateTodoList() {
             onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
-                <Button>Kategorie erstellen</Button>
+                <Button
+                    onClick={() => {
+                        console.log("click");
+                    }}
+                >
+                    Kategorie erstellen
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

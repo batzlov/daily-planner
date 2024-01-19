@@ -1,7 +1,6 @@
 "use client";
 
 import DashboardNav from "@/components/dashboard-nav";
-import { Button } from "@/components/ui/button";
 import {
     Card,
     CardDescription,
@@ -14,6 +13,7 @@ import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
 import { useState } from "react";
 import useSWR from "swr";
+import CreateCategory from "./create-category";
 import DeleteCategory from "./delete-category";
 import UpdateCategory from "./update-category";
 
@@ -47,9 +47,9 @@ export default function Categories() {
                 </div>
                 <div className="container mx-auto py-10">
                     <div className="flex justify-end">
-                        <Button>Kategorie hinzufügen</Button>
+                        <CreateCategory />
                     </div>
-                    <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                    <div className="mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
                         {data &&
                             data.map((category: any) => (
                                 <Card

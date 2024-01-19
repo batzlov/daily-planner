@@ -7,10 +7,12 @@ interface DetailsProps {
 }
 
 import DashboardNav from "@/components/dashboard-nav";
+import { Button } from "@/components/ui/button";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
 import useSWR from "swr";
 import { columns } from "./columns";
+import CreateTodo from "./create-todo";
 import DataTable from "./data-table";
 
 export default function Details({ params }: DetailsProps) {
@@ -41,21 +43,27 @@ export default function Details({ params }: DetailsProps) {
                     </div>
                 </div>
                 <div className="container mx-auto py-10">
-                    <div className="text-xl my-4">
-                        Todo-Liste: {data?.title}
+                    <div className="flex justify-between items-center">
+                        <h2 className="text-lg">{data?.title}</h2>
+                        <div>
+                            <Button className="me-1">Liste teilen</Button>
+                            <CreateTodo todoListId={params.todoListId} />
+                        </div>
                     </div>
-                    {data && data.todos && (
-                        <DataTable
-                            columns={columns}
-                            data={data.todos}
-                        />
-                    )}
-                    {data && data.todos === null && (
-                        <DataTable
-                            columns={columns}
-                            data={[]}
-                        />
-                    )}
+                    <div className="mt-12">
+                        {data && data.todos && (
+                            <DataTable
+                                columns={columns}
+                                data={data.todos}
+                            />
+                        )}
+                        {data && data.todos === null && (
+                            <DataTable
+                                columns={columns}
+                                data={[]}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
         </>

@@ -34,8 +34,8 @@ func Router() *gin.Engine {
 	router.POST("/todo-lists", middleware.RequireAuth, controllers.CreateTodoList)
 	router.PUT("/todo-lists/:todoListId", middleware.RequireAuth, controllers.UpdateTodoList)
 	router.DELETE("/todo-lists/:todoListId", middleware.RequireAuth, controllers.DeleteTodoList)
-	router.POST("/todo-lists/:todoListId/share-with/:userId", middleware.RequireAuth, controllers.ShareTodoListWith)
-	router.DELETE("/todo-lists/:todoListId/share-with/:userId", middleware.RequireAuth, controllers.UnshareTodoListWith)
+	router.POST("/todo-lists/:todoListId/share-with", middleware.RequireAuth, controllers.ShareTodoListWith)
+	router.DELETE("/todo-lists/:todoListId/unshare-with", middleware.RequireAuth, controllers.UnshareTodoListWith)
 
 	return router
 }

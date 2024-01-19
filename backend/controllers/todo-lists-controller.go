@@ -278,7 +278,6 @@ func ReorderTodoList(context *gin.Context) {
 func ShareTodoListWith(context *gin.Context) {
 	var params struct {
 		TodoListId 	uint `uri:"todoListId" binding:"required"`
-		UserId 		uint `uri:"userId" binding:"required"`
 	}
 
 	paramsErr := context.ShouldBindUri(&params)
@@ -290,6 +289,18 @@ func ShareTodoListWith(context *gin.Context) {
 		})
 		
 		return
+	}
+
+	var body struct {
+		ShareWithMail 		string `json:"email" binding:"required,email"`
+	}
+	bodyErr := context.ShouldBindJSON(&body)
+	if bodyErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-body",
+			"message": "Invalid body, please check the provided data.",
+			"details": bodyErr.Error(),
+		})
 	}
 
 	currentUser := utils.GetCurrentUser(context)
@@ -305,19 +316,12 @@ func ShareTodoListWith(context *gin.Context) {
 		return
 	}
 
+	// TODO: only share with user if the user exists and is not already shared with
 	var userToShareWith models.User
-	initializers.DATABASE.Where("id = ?", params.UserId).First(&userToShareWith)
-	if(userToShareWith.ID == 0) {
-		context.JSON(http.StatusNotFound, gin.H {
-			"code": "not-found",
-			"message": fmt.Sprintf("No User found with the given id: %d", params.UserId),
-			"details": nil,
-		})
-
-		return
+	initializers.DATABASE.Where("email = ?", body.ShareWithMail).First(&userToShareWith)
+	if(userToShareWith.ID > 0) {
+		initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
 	}
-
-	initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
 
 	context.JSON(http.StatusOK, gin.H {})
 }
