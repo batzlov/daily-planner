@@ -21,6 +21,14 @@ type UpdateTodoParams struct {
 	TodoId uint `uri:"todoId" binding:"required"`
 }
 
+type UpdateTodoCompletedParams struct {
+	UpdateTodoParams
+}
+
+type UpdateTodoCompletedBody struct {
+	Completed bool `form:"completed" binding:"required"`
+}
+
 type DeleteTodoParams struct {
 	UpdateTodoParams
 }

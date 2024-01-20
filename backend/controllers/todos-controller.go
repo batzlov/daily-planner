@@ -133,6 +133,10 @@ func UpdateTodo(context *gin.Context) {
 	})
 }
 
+func UpdateTodoCompleted(context *gin.Context) {
+	// TODO: implement
+}
+
 func DeleteTodo(context *gin.Context) {
 	var params models.DeleteTodoParams
 	paramsErr := context.ShouldBindUri(&params)
@@ -144,10 +148,21 @@ func DeleteTodo(context *gin.Context) {
 		})
 	}
 
-	var todoToDelete models.Todo
-	result := initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).First(&todoToDelete)
+	currentUser := utils.GetCurrentUser(context)
+	var todoListToDeleteFrom models.TodoList
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).First(&todoListToDeleteFrom)
+	if todoListToDeleteFrom.ID == 0 {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
+			"details": nil,
+		})
+	}
 
-	if result.Error != nil {
+
+	var todoToDelete models.Todo
+	initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).First(&todoToDelete)
+	if todoToDelete.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H {
 			"code": "not-found",
 			"message": fmt.Sprintf("No Todo found with the given id: %d", params.TodoId),
