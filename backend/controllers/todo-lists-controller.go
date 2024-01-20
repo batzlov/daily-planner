@@ -57,6 +57,15 @@ func GetTodoListById(context *gin.Context) {
 		return
 	}
 
+	// FIXME: should be done in the database query
+	for index, todo := range todoList.Todos {
+		for secondIndex, todoToCompare := range todoList.Todos {
+			if todo.Order < todoToCompare.Order {
+				todoList.Todos[index], todoList.Todos[secondIndex] = todoList.Todos[secondIndex], todoList.Todos[index]
+			}
+		}
+	}
+
 	if todoList.CreatedBy != currentUser.ID {
 		// check if the current user is shared with the todo list
 		sharedWithCurrentUser := false
@@ -211,7 +220,8 @@ func ReorderTodoList(context *gin.Context) {
 		TodoListId 	uint `uri:"todoListId" binding:"required"`
 	}
 	var body struct {
-		Todos 		[]models.Todo `form:"todos" binding:"required,nn"`
+		// TODO: validation for not null needed?
+		Todos 		[]models.Todo `form:"todos" binding:"required"`
 	}
 
 	paramsErr := context.ShouldBindUri(&params)
@@ -264,6 +274,7 @@ func ReorderTodoList(context *gin.Context) {
 		for secondIndex, todoToUpdate := range todoListToUpdate.Todos {
 			if todo.ID == todoToUpdate.ID {
 				todoListToUpdate.Todos[secondIndex].Order = todo.Order
+				initializers.DATABASE.Save(&todoListToUpdate.Todos[secondIndex])			
 			}
 		}
 	}

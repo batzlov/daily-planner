@@ -51,7 +51,7 @@ export default function CreateCategory() {
     async function onSubmit(values: CreateCategorySchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists`)
+        wretch(`http://localhost:3001/categories`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -77,13 +77,7 @@ export default function CreateCategory() {
             onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
-                <Button
-                    onClick={() => {
-                        console.log("click");
-                    }}
-                >
-                    Kategorie erstellen
-                </Button>
+                <Button>Kategorie erstellen</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>

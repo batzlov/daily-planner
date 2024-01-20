@@ -80,13 +80,7 @@ export default function ShareWith() {
             onOpenChange={setOpen}
         >
             <DialogTrigger asChild>
-                <Button
-                    onClick={() => {
-                        console.log("click");
-                    }}
-                >
-                    Todo-Liste teilen
-                </Button>
+                <Button className="me-1">Todo-Liste teilen</Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
