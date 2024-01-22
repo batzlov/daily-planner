@@ -9,6 +9,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import * as React from "react";
 import { useSWRConfig } from "swr";
@@ -23,7 +24,7 @@ interface DeleteTodoListProps {
 
 export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const { state, dispatch } = useAuthContext();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
@@ -39,14 +40,33 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
             })
             .delete()
             .res(async (res: any) => {
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 setOpen(false);
                 mutate([`${process.env.baseUrl}/todo-lists`, state.jwt]);
+                toast({
+                    title: "Todo-Liste gelöscht",
+                    description: "Die Liste wurde erfolgreich gelöscht",
+                });
             })
             .catch((error) => {
                 console.error(error);
-            });
 
-        setIsLoading(false);
+                toast({
+                    title: "Fehler beim Löschen der Todo-Liste",
+                    description:
+                        "Beim Löschen der Todo-Liste ist ein Fehler aufgetreten",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (

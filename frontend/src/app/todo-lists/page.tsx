@@ -1,6 +1,7 @@
 "use client";
 
 import DashboardNav from "@/components/dashboard-nav";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,8 +15,8 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
+import classNames from "classnames";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import useSWR from "swr";
 import CreateTodoList from "./create-todo-list";
 import DeleteTodoList from "./delete-todo-list";
@@ -25,7 +26,6 @@ export default function TodoLists() {
     const router = useRouter();
     const { toast } = useToast();
     const { state: authState, dispatch } = useAuthContext();
-    const [todoLists, setTodoLists] = useState<any>([]);
     const { data, error, isLoading } = useSWR(
         [`${process.env.baseUrl}/todo-lists`, authState.jwt],
         ([url, jwt]) => fetcher(url, jwt)
@@ -71,15 +71,15 @@ export default function TodoLists() {
                                                 {todoList.title}
                                             </CardTitle>
                                             <CardDescription>
-                                                Lorem ipsum dolor sit amet
-                                                consectetur
+                                                Diese Liste hast du selbst
+                                                erstellt
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
                                             <p>
-                                                Aktuell befinden sich{" "}
-                                                {todoList?.todos?.length} Todos
-                                                in dieser Liste.
+                                                {todoList?.todos?.length > 0
+                                                    ? `Aktuell befinden sich ${todoList?.todos?.length}`
+                                                    : "Es befinden sich noch keine Todos in der Liste"}
                                             </p>
                                         </CardContent>
                                     </div>
@@ -110,15 +110,15 @@ export default function TodoLists() {
                                                 {todoList.title}
                                             </CardTitle>
                                             <CardDescription>
-                                                Lorem ipsum dolor sit amet
-                                                consectetur
+                                                Diese Liste wurde mit dir
+                                                geteilt
                                             </CardDescription>
                                         </CardHeader>
                                         <CardContent>
                                             <p>
-                                                Aktuell befinden sich{" "}
-                                                {todoList?.todos?.length} Todos
-                                                in dieser Liste.
+                                                {todoList?.todos?.length > 0
+                                                    ? `Aktuell befinden sich ${todoList?.todos?.length}`
+                                                    : "Es befinden sich noch keine Todos in der Liste"}
                                             </p>
                                         </CardContent>
                                     </div>
@@ -152,6 +152,25 @@ export default function TodoLists() {
                                     </CardFooter>
                                 </Card>
                             ))}
+                    </div>
+                    <div
+                        className={classNames({
+                            "mt-12":
+                                data?.sharedTodoLists?.length === 0 &&
+                                data?.todoLists?.length === 0,
+                            hidden:
+                                data?.sharedTodoLists?.length > 0 ||
+                                data?.todoLists?.length > 0 ||
+                                isLoading,
+                        })}
+                    >
+                        <Alert>
+                            <AlertTitle>Oh :o</AlertTitle>
+                            <AlertDescription>
+                                Aktuell hast du noch keine Todo-Listen erstellt
+                                und es wurden auch keine mit dir geteilt.
+                            </AlertDescription>
+                        </Alert>
                     </div>
                 </div>
             </div>

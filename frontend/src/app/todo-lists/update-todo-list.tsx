@@ -18,6 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -35,7 +36,7 @@ interface UpdateTodoListProps {
 
 export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const updateTodoListSchema = z.object({
         title: z.string().min(2, {
@@ -66,14 +67,31 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
             })
             .put(values)
             .res(async (res: any) => {
-                console.log(res);
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
                 mutate([`${process.env.baseUrl}/todo-lists`, state.jwt]);
+                toast({
+                    title: "Todo-Liste aktualisiert",
+                    description:
+                        "Deine Todo-Liste wurde erfolgreich aktualisiert",
+                });
             })
             .catch((error) => {
                 console.error(error);
+
+                toast({
+                    title: "Aktuallisieren der Todo-Liste ist fehlgeschlagen",
+                    description: "Bitte versuche es erneut",
+                });
             });
 
         setIsLoading(false);

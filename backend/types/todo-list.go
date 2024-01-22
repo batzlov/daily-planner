@@ -11,7 +11,7 @@ type CreateTodoListBody struct {
 }
 
 type UpdateTodoListParams struct {
-	TodoListId uint `uri:"categoryId" binding:"required"`
+	TodoListId uint `uri:"todoListId" binding:"required"`
 }
 
 type UpdateTodoListBody struct {
@@ -19,7 +19,7 @@ type UpdateTodoListBody struct {
 }
 
 type DeleteTodoListParams struct {
-	TodoListId uint `uri:"categoryId" binding:"required"`
+	TodoListId uint `uri:"todoListId" binding:"required"`
 }
 
 type ReorderTodoListParams struct {
