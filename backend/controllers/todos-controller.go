@@ -26,6 +26,8 @@ func CreateTodo(context *gin.Context) {
 			"message": "Invalid parameters, please check the provided data.",
 			"details": paramsErr.Error(),
 		})
+
+		return
 	}
 
 	var body types.CreateTodoBody
@@ -89,6 +91,8 @@ func UpdateTodo(context *gin.Context) {
 			"message": "Invalid parameters, please check the provided data.",
 			"details": paramsErr.Error(),
 		})
+
+		return
 	}
 
 	var body types.UpdateTodoBody
@@ -99,6 +103,8 @@ func UpdateTodo(context *gin.Context) {
 			"message": "Invalid body, please check the provided data.",
 			"details": bodyErr.Error(),
 		})
+
+		return
 	}
 
 	currentUser := utils.GetCurrentUser(context)
@@ -112,6 +118,8 @@ func UpdateTodo(context *gin.Context) {
 			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
 			"details": nil,
 		})
+
+		return
 	}
 	
 	var todoToUpdate models.Todo
@@ -146,6 +154,8 @@ func UpdateTodoCompleted(context *gin.Context) {
 			"message": "Invalid parameters, please check the provided data.",
 			"details": paramsErr.Error(),
 		})
+
+		return
 	}
 
 	var body types.UpdateTodoCompletedBody
@@ -156,6 +166,8 @@ func UpdateTodoCompleted(context *gin.Context) {
 			"message": "Invalid body, please check the provided data.",
 			"details": bodyErr.Error(),
 		})
+
+		return
 	}
 
 	var todoToUpdate models.Todo
@@ -206,6 +218,8 @@ func DeleteTodo(context *gin.Context) {
 			"message": "Invalid parameters, please check the provided data.",
 			"details": paramsErr.Error(),
 		})
+
+		return
 	}
 
 	currentUser := utils.GetCurrentUser(context)
@@ -217,6 +231,8 @@ func DeleteTodo(context *gin.Context) {
 			"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
 			"details": nil,
 		})
+
+		return
 	}
 
 

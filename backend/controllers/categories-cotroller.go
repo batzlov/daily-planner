@@ -54,6 +54,8 @@ func UpdateCategory(context *gin.Context) {
 			"message": "Invalid parameters, please check the provided data.",
 			"details": paramsErr.Error(),
 		})
+
+		return
 	}
 
 	var body types.UpdateCategoryBody
@@ -87,6 +89,8 @@ func UpdateCategory(context *gin.Context) {
 			"message": "This is a default category and can't be updated.",
 			"details": nil,
 		})
+
+		return
 	}
 
 	categoryToUpdate.Title = body.Title

@@ -283,9 +283,7 @@ func ShareTodoListWith(context *gin.Context) {
 		return
 	}
 
-	var body struct {
-		ShareWithMail 		string `json:"email" binding:"required,email"`
-	}
+	var body types.ShareTodoListWithBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -293,6 +291,8 @@ func ShareTodoListWith(context *gin.Context) {
 			"message": "Invalid body, please check the provided data.",
 			"details": bodyErr.Error(),
 		})
+
+		return
 	}
 
 	currentUser := utils.GetCurrentUser(context)

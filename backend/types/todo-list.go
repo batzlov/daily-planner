@@ -34,6 +34,10 @@ type ShareTodoListWithParams struct {
 	TodoListId uint `uri:"todoListId" binding:"required"`
 }
 
+type ShareTodoListWithBody struct {
+	ShareWithMail 		string `json:"email" binding:"required,email"`
+}
+
 type UnshareTodoListWithParams struct {
 	TodoListId uint `uri:"todoListId" binding:"required"`
 	UserId uint `uri:"userId" binding:"required"`
