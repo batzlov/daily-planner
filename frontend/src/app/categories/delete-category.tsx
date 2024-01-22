@@ -9,6 +9,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import * as React from "react";
 import { useSWRConfig } from "swr";
@@ -18,12 +19,13 @@ interface DeleteCategoryProps {
     category: {
         id: number;
         title: string;
+        createdBy: number;
     };
 }
 
 export default function DeleteCategory({ category }: DeleteCategoryProps) {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const { state, dispatch } = useAuthContext();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
     const [open, setOpen] = React.useState<boolean>(false);
@@ -39,11 +41,29 @@ export default function DeleteCategory({ category }: DeleteCategoryProps) {
             })
             .delete()
             .res(async (res: any) => {
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 setOpen(false);
                 mutate([`${process.env.baseUrl}/categories`, state.jwt]);
+                toast({
+                    title: "Kategorie gelöscht",
+                    description: "Die Kategorie wurde erfolgreich gelöscht",
+                });
             })
             .catch((error) => {
                 console.error(error);
+
+                toast({
+                    variant: "destructive",
+                    title: "Kategorie konnte nicht gelöscht werden",
+                    description: "Bitte versuche es erneut",
+                });
             });
 
         setIsLoading(false);
@@ -58,6 +78,18 @@ export default function DeleteCategory({ category }: DeleteCategoryProps) {
                 <Button
                     className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
                     variant="outline"
+                    onClick={(event: any) => {
+                        if (category.createdBy === 0) {
+                            toast({
+                                title: "Upsi :(",
+                                description:
+                                    "Vom System erstellte Kateogrien können nicht gelöscht werden",
+                            });
+
+                            event.stopPropagation();
+                            event.preventDefault();
+                        }
+                    }}
                 >
                     löschen
                 </Button>

@@ -26,8 +26,6 @@ export default function Categories() {
         ([url, jwt]) => fetcher(url, jwt)
     );
 
-    console.log(authState);
-
     return (
         <>
             <div className="h-full flex-1 flex-col space-y-8 p-8">
@@ -59,8 +57,9 @@ export default function Categories() {
                                     <CardHeader>
                                         <CardTitle>{category.title}</CardTitle>
                                         <CardDescription>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur
+                                            {category.createdBy === 0
+                                                ? "Diese Kategorie wurde vom System erstellt"
+                                                : "Diese Kategorie wurde von dir erstellt"}
                                         </CardDescription>
                                     </CardHeader>
 

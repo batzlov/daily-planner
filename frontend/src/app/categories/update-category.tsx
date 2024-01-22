@@ -18,6 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -30,6 +31,7 @@ interface UpdateCategoryProps {
     category: {
         id: number;
         title: string;
+        createdBy: number;
     };
 }
 
@@ -45,6 +47,7 @@ export default function UpdateCategory({ category }: UpdateCategoryProps) {
 
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
+    const { toast } = useToast();
     const { state, dispatch } = useAuthContext();
 
     type UpdateCategorySchemaType = z.infer<typeof updateCategorySchema>;
@@ -66,14 +69,33 @@ export default function UpdateCategory({ category }: UpdateCategoryProps) {
             })
             .put(values)
             .res(async (res: any) => {
-                console.log(res);
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
                 mutate([`${process.env.baseUrl}/categories`, state.jwt]);
+
+                toast({
+                    title: "Kategorie erfolgreich aktualisiert",
+                    description:
+                        "Deine Kategorie wurde erfolgreich aktualisiert",
+                });
             })
             .catch((error) => {
                 console.error(error);
+
+                toast({
+                    variant: "destructive",
+                    title: "Kategorie konnte nicht aktualisiert werden",
+                    description: "Bitte versuche es erneut",
+                });
             });
 
         setIsLoading(false);
@@ -88,6 +110,18 @@ export default function UpdateCategory({ category }: UpdateCategoryProps) {
                 <Button
                     className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
                     variant="outline"
+                    onClick={(event: any) => {
+                        if (category.createdBy === 0) {
+                            toast({
+                                title: "Upsi :(",
+                                description:
+                                    "Vom System erstellte Kateogrien können nicht bearbeitet werden",
+                            });
+
+                            event.stopPropagation();
+                            event.preventDefault();
+                        }
+                    }}
                 >
                     bearbeiten
                 </Button>

@@ -18,6 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -28,7 +29,7 @@ import * as z from "zod";
 
 export default function CreateCategory() {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const createCategorySchema = z.object({
         title: z.string().min(2, {
@@ -59,16 +60,34 @@ export default function CreateCategory() {
             })
             .post(values)
             .res(async (res: any) => {
-                console.log(res);
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
                 setOpen(false);
                 form.reset();
                 mutate([`${process.env.baseUrl}/categories`, state.jwt]);
+
+                toast({
+                    title: "Kategorie erfolgreich erstellt",
+                    description: "Deine Kategorie wurde erfolgreich erstellt",
+                });
             })
             .catch((error) => {
                 console.error(error);
-            });
 
-        setIsLoading(false);
+                toast({
+                    variant: "destructive",
+                    title: "Erstellen der Kategorie ist fehlgeschlagen",
+                    description: "Bitte überprüfe deine Eingaben",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (

@@ -145,7 +145,7 @@ export default function SignIn({ className, ...props }: SignInProps) {
                                 {isLoading && (
                                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                                 )}
-                                Jetzt registrieren
+                                Jetzt anmelden
                             </Button>
                             <p className="p-2 text-sm text-muted-foreground">
                                 Du hast noch kein{" "}
