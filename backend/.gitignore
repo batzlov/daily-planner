@@ -8,3 +8,6 @@
 
 *.test
 *.tmp
+
+# exclude bin directory with build files
+bin/*
