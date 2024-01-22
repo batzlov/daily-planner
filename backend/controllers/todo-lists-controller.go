@@ -21,8 +21,8 @@ func GetTodoLists(context *gin.Context) {
 	var todoLists []models.TodoList
 	var sharedTodoLists []models.TodoList
 
-	initializers.DATABASE.Where("created_by = ? AND deleted = ?", currentUser.ID, false).Find(&todoLists)
-	initializers.DATABASE.Model(&currentUser).Association("SharedTodoLists").Find(&sharedTodoLists)
+	initializers.DATABASE.Where("created_by = ? AND deleted = ?", currentUser.ID, false).Preload("Todos").Find(&todoLists)
+	initializers.DATABASE.Model(&currentUser).Preload("Todos").Association("SharedTodoLists").Find(&sharedTodoLists)
 
 	context.JSON(http.StatusOK, gin.H {
 		"data": gin.H {
