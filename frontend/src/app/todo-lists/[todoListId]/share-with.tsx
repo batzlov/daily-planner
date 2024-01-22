@@ -18,6 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -28,7 +29,7 @@ import * as z from "zod";
 
 export default function ShareWith() {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const shareWithSchema = z.object({
         email: z.string().email({
@@ -59,19 +60,34 @@ export default function ShareWith() {
             })
             .post(values)
             .res(async (res: any) => {
-                console.log(res);
+                if (!res.ok) {
+                    throw new Error("Something went wrong.");
+                }
+
                 setOpen(false);
                 form.reset();
                 mutate([
                     `${process.env.baseUrl}/todo-lists/share-with`,
                     state.jwt,
                 ]);
+                toast({
+                    title: "Todo-Liste geteilt",
+                    description: "Deine Todo-Liste wurde erfolgreich geteilt.",
+                });
             })
             .catch((error) => {
                 console.error(error);
-            });
 
-        setIsLoading(false);
+                toast({
+                    variant: "destructive",
+                    title: "Todo-Liste konnte nicht geteilt werden",
+                    description:
+                        "Deine Todo-Liste konnte nicht geteilt werden.",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (

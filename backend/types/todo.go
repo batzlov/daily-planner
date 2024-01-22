@@ -14,7 +14,7 @@ type UpdateTodoCompletedParams struct {
 }
 
 type UpdateTodoCompletedBody struct {
-	Completed bool `form:"completed" binding:"required"`
+	Completed bool `form:"completed"` // FIXME: false is also a possible value
 }
 
 type DeleteTodoParams struct {

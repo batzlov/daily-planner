@@ -27,6 +27,7 @@ func Router() *gin.Engine {
 
 	router.POST("/todo-lists/:todoListId/todos", middleware.RequireAuth, controllers.CreateTodo)
 	router.POST("/todo-lists/:todoListId/reorder-todos", middleware.RequireAuth, controllers.ReorderTodoList)
+	router.PUT("/todo-lists/:todoListId/todos/:todoId/update-completed", middleware.RequireAuth, controllers.UpdateTodoCompleted)
 	router.PUT("/todo-lists/:todoListId/todos/:todoId", middleware.RequireAuth, controllers.UpdateTodo)
 	router.DELETE("/todo-lists/:todoListId/todos/:todoId", middleware.RequireAuth, controllers.UpdateTodo)
 	

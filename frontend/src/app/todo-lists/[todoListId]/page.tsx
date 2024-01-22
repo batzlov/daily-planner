@@ -3,6 +3,7 @@
 import DashboardNav from "@/components/dashboard-nav";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { fetcher } from "@/lib/utils";
 import {
@@ -23,10 +24,10 @@ import classNames from "classnames";
 import { useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import wretch from "wretch";
+import { SortableItem } from "../../../components/sortable-item";
+import TodoItem from "../../../components/todo-item";
 import CreateTodo from "./create-todo";
 import ShareWith from "./share-with";
-import { SortableItem } from "./sortable-item";
-import TodoItem from "./todo-item";
 
 interface DetailsProps {
     params: {
@@ -42,6 +43,7 @@ export default function Details({ params }: DetailsProps) {
         })
     );
     const { mutate } = useSWRConfig();
+    const { toast } = useToast();
     const [listIsSortable, setListIsSortable] = useState(false);
     const [sortableTodos, setSortableTodos] = useState<any>([]);
     const { state: authState, dispatch } = useAuthContext();
@@ -96,8 +98,11 @@ export default function Details({ params }: DetailsProps) {
                                 className="me-1"
                                 disabled={data?.todos?.length === 0}
                                 onClick={() => {
+                                    // FIXME: handle flickering ui when saving/toggling
+
                                     if (!listIsSortable) {
                                         setSortableTodos(data?.todos);
+                                        setListIsSortable(true);
                                     } else {
                                         wretch(
                                             `${process.env.baseUrl}/todo-lists/${data?.id}/reorder-todos`
@@ -109,20 +114,37 @@ export default function Details({ params }: DetailsProps) {
                                             })
                                             .post({ todos: sortableTodos })
                                             .res(async (res: any) => {
-                                                if (res.ok) {
+                                                if (!res.ok) {
+                                                    throw new Error(
+                                                        "Something went wrong."
+                                                    );
+                                                } else {
                                                     mutate([
                                                         `${process.env.baseUrl}/todo-lists/${data?.id}`,
                                                         authState.jwt,
                                                     ]);
+                                                    toast({
+                                                        title: "Sortierung gespeichert",
+                                                        description:
+                                                            "Die Sortierung wurde erfolgreich gespeichert",
+                                                    });
                                                 }
                                             })
                                             .catch((error) => {
                                                 console.error(error);
+
+                                                toast({
+                                                    variant: "destructive",
+                                                    title: "Sortierung konnte nicht gespeichert werden",
+                                                    description:
+                                                        "Bitte versuche es erneut",
+                                                });
+                                            })
+                                            .finally(() => {
+                                                setSortableTodos([]);
+                                                setListIsSortable(false);
                                             });
                                     }
-
-                                    // FIXME: handle flickering ui when saving/toggling
-                                    setListIsSortable(!listIsSortable);
                                 }}
                             >
                                 {listIsSortable
@@ -136,7 +158,7 @@ export default function Details({ params }: DetailsProps) {
                     <div
                         className={classNames({
                             "mt-12": listIsSortable,
-                            hidden: !listIsSortable,
+                            hidden: !listIsSortable || isLoading,
                         })}
                     >
                         {listIsSortable && (
@@ -155,6 +177,7 @@ export default function Details({ params }: DetailsProps) {
                                                 key={todo.id}
                                                 id={todo.id}
                                                 todo={todo}
+                                                todoListId={data.id}
                                             />
                                         ))}
                                     </SortableContext>
@@ -165,7 +188,7 @@ export default function Details({ params }: DetailsProps) {
                     <div
                         className={classNames({
                             "mt-12": !listIsSortable,
-                            hidden: listIsSortable,
+                            hidden: listIsSortable || isLoading,
                         })}
                     >
                         {data &&
@@ -173,6 +196,7 @@ export default function Details({ params }: DetailsProps) {
                             data.todos.map((todo: any) => (
                                 <TodoItem
                                     todo={todo}
+                                    todoListId={data.id}
                                     key={todo.id}
                                     isSortable={false}
                                 />
@@ -181,7 +205,7 @@ export default function Details({ params }: DetailsProps) {
                     <div
                         className={classNames({
                             "mt-12": data?.todos?.length === 0,
-                            hidden: data?.todos?.length > 0,
+                            hidden: data?.todos?.length > 0 || isLoading,
                         })}
                     >
                         <Alert>

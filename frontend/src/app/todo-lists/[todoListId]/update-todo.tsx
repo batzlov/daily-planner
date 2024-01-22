@@ -18,6 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as React from "react";
@@ -27,6 +28,7 @@ import wretch from "wretch";
 import * as z from "zod";
 
 interface UpdateTodoProps {
+    todoListId: number;
     todo: {
         id: number;
         title: string;
@@ -36,9 +38,9 @@ interface UpdateTodoProps {
     };
 }
 
-export default function UpdateTodo({ todo }: UpdateTodoProps) {
+export default function UpdateTodo({ todoListId, todo }: UpdateTodoProps) {
     const { mutate } = useSWRConfig();
-
+    const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
     const updateTodoSchema = z.object({
         title: z.string().min(2, {
@@ -62,7 +64,7 @@ export default function UpdateTodo({ todo }: UpdateTodoProps) {
         setIsLoading(true);
 
         wretch(
-            `${process.env.baseUrl}/todo-lists/${params.todoListsId}/todos/${todo.id}`
+            `${process.env.baseUrl}/todo-lists/${todoListId}/todos/${todo.id}`
         )
             .options({
                 headers: {
@@ -71,17 +73,35 @@ export default function UpdateTodo({ todo }: UpdateTodoProps) {
             })
             .put(values)
             .res(async (res: any) => {
-                console.log(res);
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
                 mutate([
-                    `${process.env.baseUrl}/todo-lists/${params.todoListId}`,
+                    `${process.env.baseUrl}/todo-lists/${todoListId}`,
                     state.jwt,
                 ]);
+
+                toast({
+                    title: "Erstellen des Todos war erfolgreich",
+                    description: "Das Todo wurde erfolgreich erstellt",
+                });
             })
             .catch((error) => {
                 console.error(error);
+
+                toast({
+                    variant: "destructive",
+                    title: "Erstellen des Todos ist fehlgeschlagen",
+                    description: "Bitte versuche es erneut",
+                });
             });
 
         setIsLoading(false);
