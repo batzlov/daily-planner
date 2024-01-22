@@ -197,11 +197,11 @@ ALTER TABLE `todo_lists`
   ADD CONSTRAINT `fk_users_todo_lists` FOREIGN KEY (`created_by`) REFERENCES `users` (`id`);
 
 INSERT INTO `users` (`id`, `created_at`, `updated_at`, `deleted_at`, `email`, `first_name`, `last_name`, `password`) VALUES
-(1, NOW(), NOW(), NULL, 'max.mustermann@example.com', 'Max', 'Mustermann', 'pass123'),
-(2, NOW(), NOW(), NULL, 'maria.musterfrau@example.com', 'Maria', 'Musterfrau', 'pass456'),
-(3, NOW(), NOW(), NULL, 'johann.schmidt@example.com', 'Johann', 'Schmidt', 'pass789'),
-(4, NOW(), NOW(), NULL, 'lisa.bauer@example.com', 'Lisa', 'Bauer', 'pass101'),
-(5, NOW(), NOW(), NULL, 'tobias.gruber@example.com', 'Tobias', 'Gruber', 'pass102');
+(1, NOW(), NOW(), NULL, 'max.mustermann@example.com', 'Max', 'Mustermann', '$2a$10$UxhPbbRxXK09K56XpunQQuwLdGOVugPiQWSMMBFcaTCdsCn04ULoy'),
+(2, NOW(), NOW(), NULL, 'maria.musterfrau@example.com', 'Maria', 'Musterfrau', '$2a$10$UxhPbbRxXK09K56XpunQQuwLdGOVugPiQWSMMBFcaTCdsCn04ULoy'),
+(3, NOW(), NOW(), NULL, 'johann.schmidt@example.com', 'Johann', 'Schmidt', '$2a$10$UxhPbbRxXK09K56XpunQQuwLdGOVugPiQWSMMBFcaTCdsCn04ULoy'),
+(4, NOW(), NOW(), NULL, 'lisa.bauer@example.com', 'Lisa', 'Bauer', '$2a$10$UxhPbbRxXK09K56XpunQQuwLdGOVugPiQWSMMBFcaTCdsCn04ULoy'),
+(5, NOW(), NOW(), NULL, 'tobias.gruber@example.com', 'Tobias', 'Gruber', '$2a$10$UxhPbbRxXK09K56XpunQQuwLdGOVugPiQWSMMBFcaTCdsCn04ULoy');
 
 INSERT INTO `categories` (`created_at`, `updated_at`, `deleted_at`, `title`, `created_by`) VALUES
 (NOW(), NOW(), NULL, 'Gesundheit', 0),
