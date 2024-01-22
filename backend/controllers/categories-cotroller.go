@@ -16,7 +16,7 @@ func GetCategories(context *gin.Context) {
 	currentUser := utils.GetCurrentUser(context)
 
 	var categories []models.Category
-	initializers.DATABASE.Where("created_by = ? OR created_by IS NULL", currentUser.ID).Find(&categories)
+	initializers.DATABASE.Where("created_by = ? OR created_by = 0", currentUser.ID).Find(&categories)
 
 	context.JSON(http.StatusOK, gin.H {
 		"data": categories,
