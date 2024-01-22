@@ -24,7 +24,7 @@ func ConnectDatabase() {
 	var err error
 	dsn := buildConnectionString()
 	DATABASE, err = gorm.Open(mysql.Open(dsn), &gorm.Config{
-		DisableForeignKeyConstraintWhenMigrating: true,
+		// DisableForeignKeyConstraintWhenMigrating: true,
 	})
 
 	if err != nil {
