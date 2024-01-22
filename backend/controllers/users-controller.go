@@ -140,5 +140,7 @@ func SignOut(context *gin.Context) {
 	context.SetSameSite(http.SameSiteLaxMode)
 	context.SetCookie("Authorization", "", -1, "", "", false, true)
 
+	// TODO: invalidate jwt token
+
 	context.JSON(http.StatusOK, gin.H {})
 }

@@ -112,7 +112,7 @@ export default function Details({ params }: DetailsProps) {
                                                     Authorization: `Bearer ${authState.jwt}`,
                                                 },
                                             })
-                                            .post({ todos: sortableTodos })
+                                            .put({ todos: sortableTodos })
                                             .res(async (res: any) => {
                                                 if (!res.ok) {
                                                     throw new Error(

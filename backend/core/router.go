@@ -19,6 +19,7 @@ func Router() *gin.Engine {
 
 	router.POST("/sign-up", controllers.SignUp)
 	router.POST("/sign-in", controllers.SignIn)
+	router.GET("/sign-out", middleware.RequireAuth, controllers.SignOut)
 	
 	router.GET("/categories", middleware.RequireAuth, controllers.GetCategories)
 	router.POST("/categories", middleware.RequireAuth, controllers.CreateCategory)
@@ -26,18 +27,18 @@ func Router() *gin.Engine {
 	router.DELETE("/categories/:categoryId", middleware.RequireAuth, controllers.DeleteCategory)
 
 	router.POST("/todo-lists/:todoListId/todos", middleware.RequireAuth, controllers.CreateTodo)
-	router.POST("/todo-lists/:todoListId/reorder-todos", middleware.RequireAuth, controllers.ReorderTodoList)
 	router.PUT("/todo-lists/:todoListId/todos/:todoId/update-completed", middleware.RequireAuth, controllers.UpdateTodoCompleted)
 	router.PUT("/todo-lists/:todoListId/todos/:todoId", middleware.RequireAuth, controllers.UpdateTodo)
-	router.DELETE("/todo-lists/:todoListId/todos/:todoId", middleware.RequireAuth, controllers.UpdateTodo)
+	router.DELETE("/todo-lists/:todoListId/todos/:todoId", middleware.RequireAuth, controllers.DeleteTodo)
 	
+	router.PUT("/todo-lists/:todoListId/reorder-todos", middleware.RequireAuth, controllers.ReorderTodoList)
 	router.GET("/todo-lists", middleware.RequireAuth, controllers.GetTodoLists)
 	router.GET("/todo-lists/:todoListId", middleware.RequireAuth, controllers.GetTodoListById)
 	router.POST("/todo-lists", middleware.RequireAuth, controllers.CreateTodoList)
 	router.PUT("/todo-lists/:todoListId", middleware.RequireAuth, controllers.UpdateTodoList)
 	router.DELETE("/todo-lists/:todoListId", middleware.RequireAuth, controllers.DeleteTodoList)
 	router.POST("/todo-lists/:todoListId/share-with", middleware.RequireAuth, controllers.ShareTodoListWith)
-	router.DELETE("/todo-lists/:todoListId/unshare-with", middleware.RequireAuth, controllers.UnshareTodoListWith)
+	router.DELETE("/todo-lists/:todoListId/unshare-with/:userId", middleware.RequireAuth, controllers.UnshareTodoListWith)
 
 	return router
 }
