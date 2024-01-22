@@ -62,7 +62,7 @@ export default function UpdateTodo({ todo }: UpdateTodoProps) {
         setIsLoading(true);
 
         wretch(
-            `http://localhost:3001/todo-lists/${params.todoListsId}/todos/${todo.id}`
+            `${process.env.baseUrl}/todo-lists/${params.todoListsId}/todos/${todo.id}`
         )
             .options({
                 headers: {
@@ -76,7 +76,7 @@ export default function UpdateTodo({ todo }: UpdateTodoProps) {
                 form.reset();
                 form.setValue("title", values.title);
                 mutate([
-                    `http://localhost:3001/todo-lists/${params.todoListId}`,
+                    `${process.env.baseUrl}/todo-lists/${params.todoListId}`,
                     state.jwt,
                 ]);
             })

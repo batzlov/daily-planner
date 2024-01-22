@@ -22,7 +22,7 @@ export default function Categories() {
     const { state: authState, dispatch } = useAuthContext();
     const [todoLists, setTodoLists] = useState<any>([]);
     const { data, error, isLoading } = useSWR(
-        ["http://localhost:3001/categories", authState.jwt],
+        [`${process.env.baseUrl}/categories`, authState.jwt],
         ([url, jwt]) => fetcher(url, jwt)
     );
 

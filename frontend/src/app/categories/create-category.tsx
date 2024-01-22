@@ -51,7 +51,7 @@ export default function CreateCategory() {
     async function onSubmit(values: CreateCategorySchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/categories`)
+        wretch(`${process.env.baseUrl}/categories`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -62,7 +62,7 @@ export default function CreateCategory() {
                 console.log(res);
                 setOpen(false);
                 form.reset();
-                mutate(["http://localhost:3001/categories", state.jwt]);
+                mutate([`${process.env.baseUrl}/categories`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

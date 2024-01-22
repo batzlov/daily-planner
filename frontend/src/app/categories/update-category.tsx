@@ -58,7 +58,7 @@ export default function UpdateCategory({ category }: UpdateCategoryProps) {
     async function onSubmit(values: UpdateCategorySchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/categories/${category.id}`)
+        wretch(`${process.env.baseUrl}/categories/${category.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -70,7 +70,7 @@ export default function UpdateCategory({ category }: UpdateCategoryProps) {
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
-                mutate(["http://localhost:3001/categories", state.jwt]);
+                mutate([`${process.env.baseUrl}/categories`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

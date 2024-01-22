@@ -31,7 +31,7 @@ export default function DeleteCategory({ category }: DeleteCategoryProps) {
     async function deleteCategory() {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/categories/${category.id}`)
+        wretch(`${process.env.baseUrl}/categories/${category.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -40,7 +40,7 @@ export default function DeleteCategory({ category }: DeleteCategoryProps) {
             .delete()
             .res(async (res: any) => {
                 setOpen(false);
-                mutate(["http://localhost:3001/categories", state.jwt]);
+                mutate([`${process.env.baseUrl}/categories`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

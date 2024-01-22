@@ -51,7 +51,7 @@ export default function ShareWith() {
     async function onSubmit(values: ShareWithSchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists`)
+        wretch(`${process.env.baseUrl}/todo-lists`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -63,7 +63,7 @@ export default function ShareWith() {
                 setOpen(false);
                 form.reset();
                 mutate([
-                    "http://localhost:3001/todo-lists/share-with",
+                    `${process.env.baseUrl}/todo-lists/share-with`,
                     state.jwt,
                 ]);
             })

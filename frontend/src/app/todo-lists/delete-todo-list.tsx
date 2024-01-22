@@ -31,7 +31,7 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
     async function deleteTodoList() {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists/${todoList.id}`)
+        wretch(`${process.env.baseUrl}/todo-lists/${todoList.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -40,7 +40,7 @@ export default function DeleteTodoList({ todoList }: DeleteTodoListProps) {
             .delete()
             .res(async (res: any) => {
                 setOpen(false);
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate([`${process.env.baseUrl}/todo-lists`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

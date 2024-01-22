@@ -86,9 +86,17 @@ export default function SignUp({ className, ...props }: SignUpProps) {
     async function onSubmit(values: SignUpSchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/sign-up`)
+        wretch(`${process.env.baseUrl}/sign-up`)
             .post(values)
             .res((res: any) => {
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 toast({
                     title: "Juhu! Du hast dich erfolgreich registriert",
                     description: "Gleich wirst du zur Anmeldung weitergeleitet",
@@ -102,9 +110,16 @@ export default function SignUp({ className, ...props }: SignUpProps) {
             })
             .catch((error) => {
                 console.error(error);
-            });
 
-        setIsLoading(false);
+                toast({
+                    variant: "destructive",
+                    title: "Registrierung fehlgeschlagen",
+                    description: "Bitte überprüfe deine Eingaben",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (
@@ -218,14 +233,7 @@ export default function SignUp({ className, ...props }: SignUpProps) {
                                 >
                                     Konto
                                 </Link>{" "}
-                                oder hast dein{" "}
-                                <Link
-                                    href="#"
-                                    className="underline underline-offset-4 hover:text-primary"
-                                >
-                                    Passwort vergessen
-                                </Link>
-                                ?
+                                oder hast dein Passwort vergessen?
                             </p>
                         </div>
                     </form>

@@ -3,6 +3,7 @@ import MainNav from "@/components/main-nav";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Rocket } from "lucide-react";
+import Link from "next/link";
 
 export default function Home() {
     return (
@@ -33,14 +34,18 @@ export default function Home() {
                         mit anderen Nutzer:innen teilen.
                     </p>
                     <div className="mt-6">
-                        <Button className="px-10 py-6 me-2">
-                            Jetzt loslegen
+                        <Button
+                            className="px-10 py-6 me-2"
+                            asChild
+                        >
+                            <Link href="/sign-in">Jetzt loslegen</Link>
                         </Button>
                         <Button
                             className="px-10 py-6 ms-2"
                             variant="outline"
+                            asChild
                         >
-                            Mehr erfahren
+                            <Link href="/sign-in">Mehr erfahren</Link>
                         </Button>
                     </div>
                 </div>

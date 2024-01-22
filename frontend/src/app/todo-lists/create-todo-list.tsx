@@ -51,7 +51,7 @@ export default function CreateTodoList() {
     async function onSubmit(values: CreateTodoListSchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists`)
+        wretch(`${process.env.baseUrl}/todo-lists`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -62,7 +62,7 @@ export default function CreateTodoList() {
                 console.log(res);
                 setOpen(false);
                 form.reset();
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate([`${process.env.baseUrl}/todo-lists`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

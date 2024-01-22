@@ -58,7 +58,7 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
     async function onSubmit(values: UpdateTodoListSchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/todo-lists/${todoList.id}`)
+        wretch(`${process.env.baseUrl}/todo-lists/${todoList.id}`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -70,7 +70,7 @@ export default function UpdateTodoList({ todoList }: UpdateTodoListProps) {
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
-                mutate(["http://localhost:3001/todo-lists", state.jwt]);
+                mutate([`${process.env.baseUrl}/todo-lists`, state.jwt]);
             })
             .catch((error) => {
                 console.error(error);

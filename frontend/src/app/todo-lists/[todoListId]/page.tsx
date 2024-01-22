@@ -47,7 +47,7 @@ export default function Details({ params }: DetailsProps) {
     const { state: authState, dispatch } = useAuthContext();
     const { data, error, isLoading } = useSWR(
         [
-            `http://localhost:3001/todo-lists/${params.todoListId}`,
+            `${process.env.baseUrl}/todo-lists/${params.todoListId}`,
             authState.jwt,
         ],
         ([url, jwt]) => fetcher(url, jwt)
@@ -100,7 +100,7 @@ export default function Details({ params }: DetailsProps) {
                                         setSortableTodos(data?.todos);
                                     } else {
                                         wretch(
-                                            `http://localhost:3001/todo-lists/${data?.id}/reorder-todos`
+                                            `${process.env.baseUrl}/todo-lists/${data?.id}/reorder-todos`
                                         )
                                             .options({
                                                 headers: {
@@ -111,7 +111,7 @@ export default function Details({ params }: DetailsProps) {
                                             .res(async (res: any) => {
                                                 if (res.ok) {
                                                     mutate([
-                                                        `http://localhost:3001/todo-lists/${data?.id}`,
+                                                        `${process.env.baseUrl}/todo-lists/${data?.id}`,
                                                         authState.jwt,
                                                     ]);
                                                 }

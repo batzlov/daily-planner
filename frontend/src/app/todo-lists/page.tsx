@@ -27,7 +27,7 @@ export default function TodoLists() {
     const { state: authState, dispatch } = useAuthContext();
     const [todoLists, setTodoLists] = useState<any>([]);
     const { data, error, isLoading } = useSWR(
-        ["http://localhost:3001/todo-lists", authState.jwt],
+        [`${process.env.baseUrl}/todo-lists`, authState.jwt],
         ([url, jwt]) => fetcher(url, jwt)
     );
 

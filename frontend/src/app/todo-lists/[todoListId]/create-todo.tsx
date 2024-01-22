@@ -50,7 +50,7 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
         error,
         isLoading,
     } = useSWR(
-        ["http://localhost:3001/categories", authState.jwt],
+        [`${process.env.baseUrl}/categories`, authState.jwt],
         ([url, jwt]) => fetcher(url, jwt)
     );
 
@@ -86,7 +86,7 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
         );
         updatedValues.categoryId = categoryId?.id;
 
-        wretch(`http://localhost:3001/todo-lists/${todoListId}/todos`)
+        wretch(`${process.env.baseUrl}/todo-lists/${todoListId}/todos`)
             .options({
                 headers: {
                     Authorization: `Bearer ${authState.jwt}`,
@@ -98,7 +98,7 @@ export default function CreateTodo({ todoListId }: CreateTodoProps) {
                 setOpen(false);
                 form.reset();
                 mutate([
-                    `http://localhost:3001/todo-lists/${todoListId}`,
+                    `${process.env.baseUrl}/todo-lists/${todoListId}`,
                     authState.jwt,
                 ]);
             })

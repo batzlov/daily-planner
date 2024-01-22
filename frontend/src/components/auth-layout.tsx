@@ -41,7 +41,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
                     <div className="px-4 auth-content my-auto sm:mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[450px] 2xl:w-[650px]">
                         <div className="flex flex-col space-y-2 text-center">
                             <h1 className="text-2xl font-semibold tracking-tight">
-                                Erstelle jetzt einen Account
+                                Starte deine Reise in ein organisiertes Leben
                             </h1>
                             <p className="text-sm text-muted-foreground">
                                 Bitte fülle alle Felder aus.

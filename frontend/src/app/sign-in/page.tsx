@@ -11,6 +11,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import { useAuthContext } from "@/hooks/use-auth-context";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,8 +42,7 @@ const signInSchema = z.object({
 export default function SignIn({ className, ...props }: SignInProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
-    const [cookie, setCookie] = React.useState<string>("");
-
+    const { toast } = useToast();
     const { state, dispatch } = useAuthContext();
 
     type SignInSchemaType = z.infer<typeof signInSchema>;
@@ -57,9 +57,17 @@ export default function SignIn({ className, ...props }: SignInProps) {
     async function onSubmit(values: SignInSchemaType) {
         setIsLoading(true);
 
-        wretch(`http://localhost:3001/sign-in`)
+        wretch(`${process.env.baseUrl}/sign-in`)
             .post(values)
             .res(async (res: any) => {
+                if (!res.ok) {
+                    if (res.status === 400) {
+                        throw new Error("Bad request");
+                    } else {
+                        throw new Error("Something went wrong");
+                    }
+                }
+
                 const body = await res.json();
 
                 // FIXME: jwts should not be stored in localStorage in production
@@ -77,9 +85,16 @@ export default function SignIn({ className, ...props }: SignInProps) {
             })
             .catch((error) => {
                 console.error(error);
-            });
 
-        setIsLoading(false);
+                toast({
+                    variant: "destructive",
+                    title: "Anmeldung fehlgeschlagen",
+                    description: "Bitte überprüfe deine Eingaben",
+                });
+            })
+            .finally(() => {
+                setIsLoading(false);
+            });
     }
 
     return (
@@ -140,14 +155,7 @@ export default function SignIn({ className, ...props }: SignInProps) {
                                 >
                                     Konto
                                 </Link>{" "}
-                                oder hast dein{" "}
-                                <Link
-                                    href="#"
-                                    className="underline underline-offset-4 hover:text-primary"
-                                >
-                                    Passwort vergessen
-                                </Link>
-                                ?
+                                oder hast dein Passwort vergessen?
                             </p>
                         </div>
                     </form>
