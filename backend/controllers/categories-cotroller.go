@@ -126,6 +126,17 @@ func DeleteCategory(context *gin.Context) {
 		return
 	}
 
+	// check if the created_by is 0, if so it means that it's a default category and can't be deleted
+	if categoryToDelete.CreatedBy == 0 {
+		context.JSON(http.StatusNotAcceptable, gin.H {
+			"code": "default-categories-can-not-be-deleted",
+			"message": "This is a default category and can't be deleted.",
+			"details": nil,
+		})
+
+		return
+	}
+
 	// check if there are any todos with this category
 	var todos []models.Todo
 	initializers.DATABASE.Where("category_id = ?", categoryToDelete.ID).Find(&todos)
