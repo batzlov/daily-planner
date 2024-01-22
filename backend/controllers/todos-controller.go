@@ -3,10 +3,14 @@ package controllers
 import (
 	"daily-planner-api/initializers"
 	"daily-planner-api/models"
+	"daily-planner-api/types"
 	"daily-planner-api/utils"
+	"errors"
 
 	"fmt"
 	"net/http"
+
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,7 +18,7 @@ import (
 
 
 func CreateTodo(context *gin.Context) {
-	var params models.CreateTodoParams
+	var params types.CreateTodoParams
 	paramsErr := context.ShouldBindUri(&params)
 	if(paramsErr != nil) {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -24,7 +28,7 @@ func CreateTodo(context *gin.Context) {
 		})
 	}
 
-	var body models.CreateTodoBody
+	var body types.CreateTodoBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -77,7 +81,7 @@ func CreateTodo(context *gin.Context) {
 }
 
 func UpdateTodo(context *gin.Context) {
-	var params models.UpdateTodoParams
+	var params types.UpdateTodoParams
 	paramsErr := context.ShouldBindUri(&params)
 	if(paramsErr != nil) {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -87,7 +91,7 @@ func UpdateTodo(context *gin.Context) {
 		})
 	}
 
-	var body models.UpdateTodoBody
+	var body types.UpdateTodoBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -134,11 +138,67 @@ func UpdateTodo(context *gin.Context) {
 }
 
 func UpdateTodoCompleted(context *gin.Context) {
-	// TODO: implement
+	var params types.UpdateTodoCompletedParams
+	paramsErr := context.ShouldBindUri(&params)
+	if(paramsErr != nil) {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-parameters",
+			"message": "Invalid parameters, please check the provided data.",
+			"details": paramsErr.Error(),
+		})
+	}
+
+	var body types.UpdateTodoCompletedBody
+	bodyErr := context.ShouldBindJSON(&body)
+	if bodyErr != nil {
+		context.JSON(http.StatusBadRequest, gin.H {
+			"code": "invalid-body",
+			"message": "Invalid body, please check the provided data.",
+			"details": bodyErr.Error(),
+		})
+	}
+
+	var todoToUpdate models.Todo
+	var todoListToUpdate models.TodoList
+	currentUser := utils.GetCurrentUser(context)
+	
+	initializers.DATABASE.Where("id = ? AND created_by = ?", params.TodoListId, currentUser.ID).First(&todoListToUpdate)
+	if todoListToUpdate.ID == 0 {
+		// if the user is not the creator of the todo list, check if the todo list is shared with the user
+		err := initializers.DATABASE.Table("share_todo_list_with_users").Where("todo_list_id = ? AND user_id = ?", params.TodoListId, currentUser.ID).First(&todoListToUpdate).Error
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			context.JSON(http.StatusNotFound, gin.H {
+				"code": "not-found",
+				"message": fmt.Sprintf("No TodoList found with the given id: %d", params.TodoListId),
+				"details": nil,
+			})
+
+			return
+		}
+	}
+
+	initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).First(&todoToUpdate)
+	if todoToUpdate.ID == 0 {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No Todo found with the given id: %d", params.TodoId),
+			"details": nil,
+		})
+
+		return
+	}
+
+	todoToUpdate.Completed = body.Completed
+	initializers.DATABASE.Save(&todoToUpdate)
+
+	context.JSON(http.StatusOK, gin.H {
+		"data": todoToUpdate,
+	})
+	
 }
 
 func DeleteTodo(context *gin.Context) {
-	var params models.DeleteTodoParams
+	var params types.DeleteTodoParams
 	paramsErr := context.ShouldBindUri(&params)
 	if(paramsErr != nil) {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -176,7 +236,3 @@ func DeleteTodo(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H {})
 }
-
-func ShareTodosWith(context *gin.Context) {}
-
-func GetSharedTodos(context *gin.Context) {}

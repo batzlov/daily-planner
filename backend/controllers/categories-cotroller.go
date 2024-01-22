@@ -3,6 +3,7 @@ package controllers
 import (
 	"daily-planner-api/initializers"
 	"daily-planner-api/models"
+	"daily-planner-api/types"
 	"daily-planner-api/utils"
 	"net/http"
 
@@ -23,7 +24,7 @@ func GetCategories(context *gin.Context) {
 }
 
 func CreateCategory(context *gin.Context) {
-	var body models.CreateCategoryBody
+	var body types.CreateCategoryBody
 
 	if err := context.ShouldBindJSON(&body); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -45,7 +46,7 @@ func CreateCategory(context *gin.Context) {
 }
 
 func UpdateCategory(context *gin.Context) {
-	var params models.UpdateCategoryParams
+	var params types.UpdateCategoryParams
 	paramsErr := context.ShouldBindUri(&params)
 	if(paramsErr != nil) {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -55,7 +56,7 @@ func UpdateCategory(context *gin.Context) {
 		})
 	}
 
-	var body models.UpdateCategoryBody
+	var body types.UpdateCategoryBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -79,6 +80,15 @@ func UpdateCategory(context *gin.Context) {
 		return
 	}
 
+	// check if the created_by is 0, if so it means that it's a default category and can't be updated
+	if categoryToUpdate.CreatedBy == 0 {
+		context.JSON(http.StatusNotAcceptable, gin.H {
+			"code": "default-categories-can-not-be-updated",
+			"message": "This is a default category and can't be updated.",
+			"details": nil,
+		})
+	}
+
 	categoryToUpdate.Title = body.Title
 	initializers.DATABASE.Save(&categoryToUpdate)
 
@@ -88,7 +98,7 @@ func UpdateCategory(context *gin.Context) {
 }
 
 func DeleteCategory(context *gin.Context) {
-	var params models.DeleteCategoryParams
+	var params types.DeleteCategoryParams
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {

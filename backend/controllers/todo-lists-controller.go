@@ -3,10 +3,14 @@ package controllers
 import (
 	"daily-planner-api/initializers"
 	"daily-planner-api/models"
+	"daily-planner-api/types"
 	"daily-planner-api/utils"
+	"errors"
 	"fmt"
 
 	"net/http"
+
+	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,10 +33,7 @@ func GetTodoLists(context *gin.Context) {
 }
 
 func GetTodoListById(context *gin.Context) {
-	var params struct {
-		TodoListId uint `uri:"todoListId" binding:"required"`
-	}
-
+	var params types.GetTodoListByIdParams
 	if err := context.ShouldBindUri(&params); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-parameters",
@@ -92,10 +93,7 @@ func GetTodoListById(context *gin.Context) {
 }
 
 func CreateTodoList(context *gin.Context) {
-	var body struct {
-		Title string `form:"title" binding:"required,min=3,max=64"`
-	}
-	
+	var body types.CreateTodoListBody
 	if err := context.ShouldBindJSON(&body); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-body",
@@ -119,13 +117,7 @@ func CreateTodoList(context *gin.Context) {
 }
 
 func UpdateTodoList(context *gin.Context) {
-	var params struct {
-		TodoListId 	uint `uri:"todoListId" binding:"required"`
-	}
-	var body struct {
-		Title 		string `form:"title" binding:"required,min=3,max=64"`
-	}
-
+	var params types.UpdateTodoListParams
 	// first of all check for valid uri parameters
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
@@ -137,8 +129,9 @@ func UpdateTodoList(context *gin.Context) {
 		
 		return
 	}
-
+	
 	// then check for valid body parameters
+	var body types.UpdateTodoListBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -179,10 +172,7 @@ func UpdateTodoList(context *gin.Context) {
 }
 
 func DeleteTodoList(context *gin.Context) {
-	var params struct {
-		TodoListId 	uint `uri:"todoListId" binding:"required"`
-	}
-
+	var params types.DeleteTodoListParams
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -216,14 +206,7 @@ func DeleteTodoList(context *gin.Context) {
 }
 
 func ReorderTodoList(context *gin.Context) {
-	var params struct {
-		TodoListId 	uint `uri:"todoListId" binding:"required"`
-	}
-	var body struct {
-		// TODO: validation for not null needed?
-		Todos 		[]models.Todo `form:"todos" binding:"required"`
-	}
-
+	var params types.ReorderTodoListParams
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -234,7 +217,8 @@ func ReorderTodoList(context *gin.Context) {
 		
 		return
 	}
-
+	
+	var body types.ReorderTodoListBody
 	bodyErr := context.ShouldBindJSON(&body)
 	if bodyErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -287,10 +271,7 @@ func ReorderTodoList(context *gin.Context) {
 }
 
 func ShareTodoListWith(context *gin.Context) {
-	var params struct {
-		TodoListId 	uint `uri:"todoListId" binding:"required"`
-	}
-
+	var params types.ShareTodoListWithParams
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
@@ -327,22 +308,22 @@ func ShareTodoListWith(context *gin.Context) {
 		return
 	}
 
-	// TODO: only share with user if the user exists and is not already shared with
-	var userToShareWith models.User
-	initializers.DATABASE.Where("email = ?", body.ShareWithMail).First(&userToShareWith)
-	if(userToShareWith.ID > 0) {
-		initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
+	err := initializers.DATABASE.Table("share_todo_list_with_users").Where("todo_list_id = ? AND user_id = ?", params.TodoListId, currentUser.ID).First(&todoListToShare).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// if the list is not already shared with the user, share it
+		var userToShareWith models.User
+		initializers.DATABASE.Where("email = ?", body.ShareWithMail).First(&userToShareWith)
+		if(userToShareWith.ID > 0) {
+			initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
+		}
 	}
+
 
 	context.JSON(http.StatusOK, gin.H {})
 }
 
 func UnshareTodoListWith(context *gin.Context) {
-	var params struct {
-		TodoListId 	uint `uri:"todoListId" binding:"required"`
-		UserId 		uint `uri:"userId" binding:"required"`
-	}
-
+	var params types.UnshareTodoListWithParams
 	paramsErr := context.ShouldBindUri(&params)
 	if paramsErr != nil {
 		context.JSON(http.StatusBadRequest, gin.H {

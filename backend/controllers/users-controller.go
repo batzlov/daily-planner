@@ -3,6 +3,7 @@ package controllers
 import (
 	"daily-planner-api/initializers"
 	"daily-planner-api/models"
+	"daily-planner-api/types"
 	"net/http"
 	"os"
 	"time"
@@ -13,13 +14,7 @@ import (
 )
 
 func SignUp(context *gin.Context) {
-	var body struct {
-		FirstName 	string `form:"firstName" binding:"required,min=2,max=64"`
-		LastName 	string `form:"lastName" binding:"required,min=2,max=64"`
-		Email 		string `form:"email" binding:"required,email"`
-		Password 	string `form:"password" binding:"required,min=8,max=64"`
-	}
-
+	var body types.SignUpBody
 	if err := context.ShouldBindJSON(&body); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-body",
@@ -77,12 +72,7 @@ func SignUp(context *gin.Context) {
 }
 
 func SignIn(context *gin.Context) {
-	var body struct {
-		Email 		string `form:"email" binding:"required,email"`
-		Password 	string `form:"password" binding:"required,min=8,max=64"`
-	}
-
-
+	var body types.SignInBody
 	if err := context.ShouldBindJSON(&body); err != nil {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-body",
