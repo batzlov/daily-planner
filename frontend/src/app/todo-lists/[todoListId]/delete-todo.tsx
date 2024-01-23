@@ -36,7 +36,7 @@ export default function DeleteTodo({ todoListId, todo }: DeleteTodoProps) {
         setIsLoading(true);
 
         wretch(
-            `${process.env.baseUrl}/todo-lists/${todoListId}/todo/${todo.id}`
+            `${process.env.baseUrl}/todo-lists/${todoListId}/todos/${todo.id}`
         )
             .options({
                 headers: {
