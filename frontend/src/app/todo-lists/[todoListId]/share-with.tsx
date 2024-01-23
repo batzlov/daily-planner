@@ -27,7 +27,11 @@ import { useSWRConfig } from "swr";
 import wretch from "wretch";
 import * as z from "zod";
 
-export default function ShareWith() {
+interface ShareWithProps {
+    todoListId: number;
+}
+
+export default function ShareWith({ todoListId }: ShareWithProps) {
     const { mutate } = useSWRConfig();
     const { toast } = useToast();
     const [open, setOpen] = React.useState(false);
@@ -52,7 +56,7 @@ export default function ShareWith() {
     async function onSubmit(values: ShareWithSchemaType) {
         setIsLoading(true);
 
-        wretch(`${process.env.baseUrl}/todo-lists`)
+        wretch(`${process.env.baseUrl}/todo-lists/${todoListId}/share-with`)
             .options({
                 headers: {
                     Authorization: `Bearer ${state.jwt}`,
@@ -67,7 +71,7 @@ export default function ShareWith() {
                 setOpen(false);
                 form.reset();
                 mutate([
-                    `${process.env.baseUrl}/todo-lists/share-with`,
+                    `${process.env.baseUrl}/todo-lists/${todoListId}`,
                     state.jwt,
                 ]);
                 toast({

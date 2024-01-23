@@ -162,7 +162,9 @@ export default function Details({ params }: DetailsProps) {
                             </Button>
                             {data?.createdBy === authState.user.id && (
                                 <>
-                                    <ShareWith />
+                                    <ShareWith
+                                        todoListId={Number(params.todoListId)}
+                                    />
                                     <CreateTodo
                                         todoListId={params.todoListId}
                                     />
