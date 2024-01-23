@@ -57,6 +57,18 @@ func CreateTodo(context *gin.Context) {
 		return
 	}
 
+	var category models.Category
+	initializers.DATABASE.Where("id = ?", body.CategoryId).First(&category)
+	if category.ID == 0 {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No Category found with the given id: %d", body.CategoryId),
+			"details": nil,
+		})
+
+		return
+	}
+
 	initializers.DATABASE.Order("todos.order DESC").Where("todo_list_id = ?", params.TodoListId).Find(&highestOrderTodo)
 	var currentlyHighestOrder uint
 	if(highestOrderTodo.Order == 0) {
@@ -65,6 +77,7 @@ func CreateTodo(context *gin.Context) {
 		currentlyHighestOrder = highestOrderTodo.Order
 	}
 
+
 	// add the new todo to the list
 	todoToCreate := models.Todo{
 		Title: body.Title,
@@ -72,10 +85,10 @@ func CreateTodo(context *gin.Context) {
 		Completed: body.Completed,
 		Order: currentlyHighestOrder + 1,
 		TodoListID: params.TodoListId,
-	}
-	todoList.Todos = append(todoList.Todos, todoToCreate)
-	
-	initializers.DATABASE.Save(&todoToCreate)
+		CategoryID: body.CategoryId,
+		Category: category,
+	}	
+	initializers.DATABASE.Model(&todoList).Association("Todos").Append(&todoToCreate)
 
 	context.JSON(http.StatusCreated, gin.H {
 		"data": todoList,
@@ -134,9 +147,22 @@ func UpdateTodo(context *gin.Context) {
 		return
 	}
 
+	var category models.Category
+	initializers.DATABASE.Where("id = ?", body.CategoryId).First(&category)
+	if category.ID == 0 {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No Category found with the given id: %d", body.CategoryId),
+			"details": nil,
+		})
+		return;
+	}
+
 	todoToUpdate.Title = body.Title
 	todoToUpdate.Description = body.Description
 	todoToUpdate.Completed = body.Completed
+	todoToUpdate.CategoryID = body.CategoryId
+	todoToUpdate.Category = category
 
 	initializers.DATABASE.Save(&todoToUpdate)
 

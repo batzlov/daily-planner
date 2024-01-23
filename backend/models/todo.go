@@ -9,5 +9,5 @@ type Todo struct {
 
 	TodoListID 		uint   		`gorm:"not null" json:"todoListId"`
 	CategoryID 		uint   		`gorm:"not null" json:"categoryId"`
-	Category 		Category	`gorm:"constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;" json:"category"`
+	Category 		Category	`gorm:"constraint:OnUpdate:NO ACTION,OnDelete:RESTRICT;" json:"category"`
 }

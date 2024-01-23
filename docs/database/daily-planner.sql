@@ -188,7 +188,7 @@ ALTER TABLE `share_todo_list_with_users`
 --
 ALTER TABLE `todos`
   ADD CONSTRAINT `fk_todo_lists_todos` FOREIGN KEY (`todo_list_id`) REFERENCES `todo_lists` (`id`),
-  ADD CONSTRAINT `fk_todos_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_todos_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON UPDATE NO ACTION;
 
 --
 -- Constraints der Tabelle `todo_lists`
