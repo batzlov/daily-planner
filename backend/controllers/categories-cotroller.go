@@ -43,6 +43,10 @@ func CreateCategory(context *gin.Context) {
 	}
 
 	initializers.DATABASE.Create(&categoryToCreate)
+
+	context.JSON(http.StatusCreated, gin.H {
+		"data": categoryToCreate,
+	})
 }
 
 func UpdateCategory(context *gin.Context) {
@@ -93,6 +97,17 @@ func UpdateCategory(context *gin.Context) {
 		return
 	}
 
+	currentUser := utils.GetCurrentUser(context)
+	if categoryToUpdate.CreatedBy != currentUser.ID {
+		context.JSON(http.StatusForbidden, gin.H {
+			"code": "forbidden",
+			"message": "You are not allowed to update this category.",
+			"details": nil,
+		})
+
+		return
+	}
+
 	categoryToUpdate.Title = body.Title
 	initializers.DATABASE.Save(&categoryToUpdate)
 
@@ -131,6 +146,17 @@ func DeleteCategory(context *gin.Context) {
 		context.JSON(http.StatusNotAcceptable, gin.H {
 			"code": "default-categories-can-not-be-deleted",
 			"message": "This is a default category and can't be deleted.",
+			"details": nil,
+		})
+
+		return
+	}
+
+	currentUser := utils.GetCurrentUser(context)
+	if categoryToDelete.CreatedBy != currentUser.ID {
+		context.JSON(http.StatusForbidden, gin.H {
+			"code": "forbidden",
+			"message": "You are not allowed to delete this category.",
 			"details": nil,
 		})
 

@@ -308,16 +308,34 @@ func ShareTodoListWith(context *gin.Context) {
 		return
 	}
 
-	err := initializers.DATABASE.Table("share_todo_list_with_users").Where("todo_list_id = ? AND user_id = ?", params.TodoListId, currentUser.ID).First(&todoListToShare).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
-		// if the list is not already shared with the user, share it
-		var userToShareWith models.User
-		initializers.DATABASE.Where("email = ?", body.ShareWithMail).First(&userToShareWith)
-		if(userToShareWith.ID > 0) {
-			initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
-		}
+	if(currentUser.Email == body.ShareWithMail) {
+		context.JSON(http.StatusNotAcceptable, gin.H {
+			"code": "can-not-share-with-yourself",
+			"message": "You can't share a TodoList with yourself.",
+			"details": nil,
+		})
+
+		return
 	}
 
+	var sharedRelationExists struct {
+		UserId uint
+		TodoListId uint
+	}
+
+	var userToShareWith models.User
+	initializers.DATABASE.Where("email = ?", body.ShareWithMail).First(&userToShareWith)
+	if(userToShareWith.ID == 0) {
+		// render a 200 response if the user does not exist so no one can guess if a user exists or not
+		context.JSON(http.StatusOK, gin.H {})
+		return;
+	}
+
+	err := initializers.DATABASE.Unscoped().Table("share_todo_list_with_users").Where("todo_list_id = ? AND user_id = ?", params.TodoListId, userToShareWith.ID).First(&sharedRelationExists).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		// if the list is not already shared with the user, share it
+		initializers.DATABASE.Model(&todoListToShare).Association("SharedWith").Append(&userToShareWith)
+	}
 
 	context.JSON(http.StatusOK, gin.H {})
 }
@@ -360,7 +378,23 @@ func UnshareTodoListWith(context *gin.Context) {
 		return
 	}
 
-	initializers.DATABASE.Model(&todoListToUnshare).Association("SharedWith").Delete(&userToUnshareWith)
+	var sharedRelation struct {
+		UserId uint
+		TodoListId uint
+	}
+	err := initializers.DATABASE.Unscoped().Table("share_todo_list_with_users").Where("todo_list_id = ? AND user_id = ?", params.TodoListId, userToUnshareWith.ID).First(&sharedRelation).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		context.JSON(http.StatusNotFound, gin.H {
+			"code": "not-found",
+			"message": fmt.Sprintf("No relation between TodoList and User found with the given ids: %d, %d", params.TodoListId, params.UserId),
+			"details": nil,
+		})
+
+		return;
+	} else {
+		initializers.DATABASE.Model(&todoListToUnshare).Association("SharedWith").Delete(&userToUnshareWith)
+	}
+
 
 	context.JSON(http.StatusOK, gin.H {})
 }

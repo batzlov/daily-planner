@@ -29,7 +29,7 @@ func SignUp(context *gin.Context) {
 	result := initializers.DATABASE.Where("email = ?", body.Email).Find(&userWithMailAlreadyExists)
 
 	if result.Error != nil || userWithMailAlreadyExists.ID > 0 {
-		context.JSON(http.StatusBadRequest, gin.H {
+		context.JSON(http.StatusNotAcceptable, gin.H {
 			"code": "mail-already-used",
 			"message": "The provided mail is already in use.",
 		})
@@ -40,7 +40,7 @@ func SignUp(context *gin.Context) {
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(body.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		context.JSON(http.StatusBadRequest, gin.H {
+		context.JSON(http.StatusNotAcceptable, gin.H {
 			"code": "hashing-password-failed",
 			"message": "Failed to generate password hash.",
 			"details": err.Error(),
@@ -59,7 +59,7 @@ func SignUp(context *gin.Context) {
 	result = initializers.DATABASE.Create(&userToCreate)
 
 	if result.Error != nil {
-		context.JSON(http.StatusBadRequest, gin.H {
+		context.JSON(http.StatusNotAcceptable, gin.H {
 			"code": "creating-user-failed",
 			"message": "Failed to create user.",
 			"details": result.Error.Error(),
@@ -90,7 +90,7 @@ func SignIn(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-credentials",
 			"message": "The provided credentials are invalid.",
-			"details": result.Error.Error(),
+			"details": nil,
 		})
 
 		return
@@ -102,7 +102,7 @@ func SignIn(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H {
 			"code": "invalid-credentials",
 			"message": "The provided credentials are invalid.",
-			"details": err.Error(),
+			"details": nil,
 		})
 
 		return
@@ -129,6 +129,9 @@ func SignIn(context *gin.Context) {
 	context.SetSameSite(http.SameSiteLaxMode)
 	context.SetCookie("Authorization", tokenString, 3600 * 24, "", "", false, true)
 
+	// override password hash before sending user to the client
+	user.Password = ""
+
 	context.JSON(http.StatusCreated, gin.H {
 		"jwt": tokenString,
 		"jwtExpiresAt": time.Now().Add(time.Hour * 24).Unix(),
@@ -140,7 +143,7 @@ func SignOut(context *gin.Context) {
 	context.SetSameSite(http.SameSiteLaxMode)
 	context.SetCookie("Authorization", "", -1, "", "", false, true)
 
-	// TODO: invalidate jwt token
+	// FIXME: invalidate jwt token
 
 	context.JSON(http.StatusOK, gin.H {})
 }
