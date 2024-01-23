@@ -84,8 +84,9 @@ export default function DeleteTodo({ todoListId, todo }: DeleteTodoProps) {
         >
             <DialogTrigger asChild>
                 <Button
-                    className="transistion duration-400 ease-in-out hover:bg-primary hover:text-primary-foreground"
-                    variant="outline"
+                    className="px-1"
+                    variant="link"
+                    disabled={todo?.completed}
                 >
                     löschen
                 </Button>

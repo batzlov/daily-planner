@@ -21,6 +21,7 @@ export function SortableItem(props: any) {
             <TodoItem
                 todo={props.todo}
                 todoListId={props.todoListId}
+                userIsTodoListOwner={props.userIsTodoListOwner}
                 isSortable={true}
             />
         </div>

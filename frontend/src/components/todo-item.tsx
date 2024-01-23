@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import DeleteTodo from "@/app/todo-lists/[todoListId]/delete-todo";
+import UpdateTodo from "@/app/todo-lists/[todoListId]/update-todo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/components/ui/use-toast";
@@ -6,16 +7,19 @@ import { useAuthContext } from "@/hooks/use-auth-context";
 import classNames from "classnames";
 import { useSWRConfig } from "swr";
 import wretch from "wretch";
+import { Button } from "./ui/button";
 
 interface TodoItemProps {
     todo: any;
     todoListId: number;
+    userIsTodoListOwner: boolean;
     isSortable: boolean;
 }
 
 export default function TodoItem({
     todo,
     todoListId,
+    userIsTodoListOwner,
     isSortable,
 }: TodoItemProps) {
     const { mutate } = useSWRConfig();
@@ -80,20 +84,46 @@ export default function TodoItem({
                     </CardTitle>
                 </div>
                 <CardContent className="p-0">
-                    <Button
-                        className="px-1"
-                        variant="link"
-                        disabled={todo?.completed}
-                    >
-                        bearbeiten
-                    </Button>
-                    <Button
-                        className="px-1"
-                        variant="link"
-                        disabled={todo?.completed}
-                    >
-                        löschen
-                    </Button>
+                    {userIsTodoListOwner && (
+                        <>
+                            <UpdateTodo
+                                todo={todo}
+                                todoListId={todoListId}
+                            />
+                            <DeleteTodo
+                                todo={todo}
+                                todoListId={todoListId}
+                            />
+                        </>
+                    )}
+                    {!userIsTodoListOwner && (
+                        <>
+                            <Button
+                                variant="link"
+                                onClick={() => {
+                                    toast({
+                                        title: "Fehlende Berechtigung",
+                                        description:
+                                            "Todos können aktuell nur durch den Besitzer der Todo-Liste bearbeitet werden",
+                                    });
+                                }}
+                            >
+                                bearbeiten
+                            </Button>
+                            <Button
+                                variant="link"
+                                onClick={() => {
+                                    toast({
+                                        title: "Fehlende Berechtigung",
+                                        description:
+                                            "Todos können aktuell nur durch den Besitzer der Todo-Liste gelöscht werden",
+                                    });
+                                }}
+                            >
+                                löschen
+                            </Button>
+                        </>
+                    )}
                 </CardContent>
             </CardHeader>
         </Card>

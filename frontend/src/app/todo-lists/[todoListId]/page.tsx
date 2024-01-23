@@ -98,9 +98,18 @@ export default function Details({ params }: DetailsProps) {
                                 className="me-1"
                                 disabled={data?.todos?.length === 0}
                                 onClick={() => {
-                                    // FIXME: handle flickering ui when saving/toggling
+                                    if (data?.createdBy !== authState.user.id) {
+                                        toast({
+                                            title: "Sortierung konnte nicht geändert werden",
+                                            description:
+                                                "Aktuell kann nur der Besitzer der Liste die Sortierung ändern",
+                                        });
+                                        return;
+                                    }
 
                                     if (!listIsSortable) {
+                                        // FIXME: handle flickering ui when saving/toggling
+
                                         setSortableTodos(data?.todos);
                                         setListIsSortable(true);
                                     } else {
@@ -151,8 +160,41 @@ export default function Details({ params }: DetailsProps) {
                                     ? "Sortierung speichern"
                                     : "Sortierung ändern"}
                             </Button>
-                            <ShareWith />
-                            <CreateTodo todoListId={params.todoListId} />
+                            {data?.createdBy === authState.user.id && (
+                                <>
+                                    <ShareWith />
+                                    <CreateTodo
+                                        todoListId={params.todoListId}
+                                    />
+                                </>
+                            )}
+                            {data?.createdBy !== authState.user.id && (
+                                <>
+                                    <Button
+                                        className="me-1"
+                                        onClick={() => {
+                                            toast({
+                                                title: "Todo-Liste konnte nicht geteilt werden",
+                                                description:
+                                                    "Aktuell kann nur der Besitzer der Liste diese teilen",
+                                            });
+                                        }}
+                                    >
+                                        Todo-Liste teilen
+                                    </Button>
+                                    <Button
+                                        onClick={() => {
+                                            toast({
+                                                title: "Todo konnte nicht hinzugefügt werden",
+                                                description:
+                                                    "Aktuell kann nur der Besitzer der Liste neue Todos hinzufügen",
+                                            });
+                                        }}
+                                    >
+                                        Todo erstellen
+                                    </Button>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div
@@ -178,6 +220,10 @@ export default function Details({ params }: DetailsProps) {
                                                 id={todo.id}
                                                 todo={todo}
                                                 todoListId={data.id}
+                                                userIsTodoListOwner={
+                                                    data.createdBy ===
+                                                    authState.user.id
+                                                }
                                             />
                                         ))}
                                     </SortableContext>
@@ -197,6 +243,9 @@ export default function Details({ params }: DetailsProps) {
                                 <TodoItem
                                     todo={todo}
                                     todoListId={data.id}
+                                    userIsTodoListOwner={
+                                        data.createdBy === authState.user.id
+                                    }
                                     key={todo.id}
                                     isSortable={false}
                                 />
