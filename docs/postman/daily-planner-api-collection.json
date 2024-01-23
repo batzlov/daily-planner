@@ -1,0 +1,672 @@
+{
+	"info": {
+		"_postman_id": "2ce31fac-53d1-494a-920d-2850027465d1",
+		"name": "daily-planner-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "7776461",
+		"_collection_link": "https://cloudy-rocket-85677.postman.co/workspace/My-Workspace~9ca11e40-0642-4c98-87db-4c2de6acb45f/collection/7776461-2ce31fac-53d1-494a-920d-2850027465d1?action=share&source=collection_link&creator=7776461"
+	},
+	"item": [
+		{
+			"name": "todo-lists",
+			"item": [
+				{
+					"name": "CreateTodoList",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Haushalt & Putzen for me\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ShareTodoListWith",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"tobias.gruber@example.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/14/share-with",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"14",
+								"share-with"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UnshareTodoListWith",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/14/unshare-with/5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"14",
+								"unshare-with",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "ReorderTodoList",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"todos\": [\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": true,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"1 Liter Bio-Milch\",\n\t\t\t\"id\": 1,\n\t\t\t\"order\": 1,\n\t\t\t\"title\": \"Milch kaufen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T13:10:12.832+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Bio-Butter\",\n\t\t\t\"id\": 3,\n\t\t\t\"order\": 2,\n\t\t\t\"title\": \"Butter besorgen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T10:53:33.945+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et\",\n\t\t\t\"id\": 27,\n\t\t\t\"order\": 3,\n\t\t\t\"title\": \"Todo I\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T10:53:33.945+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Frische Tomaten\",\n\t\t\t\"id\": 6,\n\t\t\t\"order\": 4,\n\t\t\t\"title\": \"Tomaten besorgen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Vollkornbrot\",\n\t\t\t\"id\": 2,\n\t\t\t\"order\": 5,\n\t\t\t\"title\": \"Brot kaufen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Bio-Kaffee\",\n\t\t\t\"id\": 7,\n\t\t\t\"order\": 6,\n\t\t\t\"title\": \"Kaffee kaufen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Verschiedene Käsesorten\",\n\t\t\t\"id\": 5,\n\t\t\t\"order\": 7,\n\t\t\t\"title\": \"Käse kaufen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T09:50:33+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Frische Äpfel\",\n\t\t\t\"id\": 4,\n\t\t\t\"order\": 8,\n\t\t\t\"title\": \"Äpfel holen\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T09:50:33+01:00\"\n\t\t},\n\t\t{\n\t\t\t\"category\": {\n\t\t\t\t\"createdAt\": \"0001-01-01T00:00:00Z\",\n\t\t\t\t\"createdBy\": 0,\n\t\t\t\t\"deletedAt\": null,\n\t\t\t\t\"id\": 0,\n\t\t\t\t\"title\": \"\",\n\t\t\t\t\"updatedAt\": \"0001-01-01T00:00:00Z\"\n\t\t\t},\n\t\t\t\"categoryId\": 1,\n\t\t\t\"completed\": false,\n\t\t\t\"createdAt\": \"2024-01-23T10:54:10.698+01:00\",\n\t\t\t\"deletedAt\": null,\n\t\t\t\"description\": \"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et\",\n\t\t\t\"id\": 28,\n\t\t\t\"order\": 9,\n\t\t\t\"title\": \"Todo II\",\n\t\t\t\"todoListId\": 1,\n\t\t\t\"updatedAt\": \"2024-01-23T10:54:10.698+01:00\"\n\t\t}\n\t]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1/reorder-todos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1",
+								"reorder-todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTodoLists",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTodoList",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Schäner Name Todo-List\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetTodoListById",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTodoList",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "categories",
+			"item": [
+				{
+					"name": "CreateCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Sport-Challenges\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Challenges\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/categories/27",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories",
+								"27"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteCategory",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories/29",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories",
+								"29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetCategories",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearerToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/categories",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"categories"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "SignUp",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"johanna_blau@example.com\",\n    \"firstName\": \"Johanne\",\n    \"lastName\": \"Blau\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/sign-up",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sign-up"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignIn",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const environmentToken = \"bearerToken\"; // the name of the environment variable",
+									"const newToken = pm.response.json().jwt;",
+									"",
+									"pm.test(\"access token value should be present\", function() {",
+									"  pm.expect(newToken.length > 0);",
+									"});",
+									"",
+									"pm.collectionVariables.set(environmentToken, newToken);",
+									"",
+									"pm.test(\"Token environment variable should be updated\", function() {",
+									"  const checkToken = pm.collectionVariables.get(environmentToken);",
+									"  pm.expect(checkToken).to.eql(newToken);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"max.mustermann@example.com\",\n    \"password\": \"password\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/sign-in",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sign-in"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "SignOut",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const environmentToken = \"bearerToken\"; // the name of the environment variable",
+									"const newToken = pm.response.json().jwt;",
+									"",
+									"pm.test(\"access token value should be present\", function() {",
+									"  pm.expect(newToken.length > 0);",
+									"});",
+									"",
+									"pm.collectionVariables.set(environmentToken, newToken);",
+									"",
+									"pm.test(\"Token environment variable should be updated\", function() {",
+									"  const checkToken = pm.collectionVariables.get(environmentToken);",
+									"  pm.expect(checkToken).to.eql(newToken);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/sign-out",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"sign-out"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "todos",
+			"item": [
+				{
+					"name": "CreateTodo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmVzQXQiOjE3MDU1Njg1NTcsInN1YmplY3QiOjN9.hMMtKSBHqQCnCroB2L1bo8sc10SEf6fM8wAh3JlQSu4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Todo II\",\n    \"description\": \"Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et\",\n    \"categoryId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1/todos",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1",
+								"todos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTodo",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Todo neuer Titel\",\n    \"description\": \"Eine Beschreibung\",\n    \"completed\": false,\n    \"categoryId\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1/todos/6",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1",
+								"todos",
+								"6"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "UpdateTodoCompleted",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"completed\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1/todos/1/update-completed",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1",
+								"todos",
+								"1",
+								"update-completed"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DeleteTodo",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/todo-lists/1/todos/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"todo-lists",
+								"1",
+								"todos",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "bearerToken",
+			"value": ""
+		},
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:3001"
+		}
+	]
+}
