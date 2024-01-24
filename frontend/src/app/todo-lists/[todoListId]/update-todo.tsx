@@ -153,6 +153,7 @@ export default function UpdateTodo({ todoListId, todo }: UpdateTodoProps) {
                         return category.id === todo.categoryId;
                     }).title || "";
                 form.setValue("category", category);
+                form.setValue("completed", todo.completed);
             }}
         >
             <DialogTrigger asChild>

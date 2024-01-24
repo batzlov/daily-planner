@@ -39,6 +39,7 @@ export default function TodoItem({
                 <div className="flex flex-row justify-start items-center space-x-8">
                     <Checkbox
                         defaultChecked={todo?.completed}
+                        checked={todo?.completed}
                         onCheckedChange={(checked) => {
                             todo.completed = checked;
 
