@@ -112,6 +112,11 @@ export default function Details({ params }: DetailsProps) {
 
                                         setSortableTodos(data?.todos);
                                         setListIsSortable(true);
+                                        toast({
+                                            title: "Sortierung kann geändert werden",
+                                            description:
+                                                "In diesem Modus kannst du keine Todos als erledigt markieren, bearbeiten oder löschen.",
+                                        });
                                     } else {
                                         wretch(
                                             `${process.env.baseUrl}/todo-lists/${data?.id}/reorder-todos`
