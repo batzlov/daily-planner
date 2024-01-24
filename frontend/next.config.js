@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     env: {
-        baseUrl: "http://localhost:3001",
+        baseUrl: process.env.NEXT_PUBLIC_BASE_URL,
     },
 };
 
