@@ -11,6 +11,12 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -226,7 +232,7 @@ export default function SignUp({ className, ...props }: SignUpProps) {
                                 )}
                                 Jetzt registrieren
                             </Button>
-                            <p className="p-2 text-sm text-muted-foreground">
+                            <div className="p-2 text-sm text-muted-foreground">
                                 Du hast schon ein{" "}
                                 <Link
                                     href="/sign-in"
@@ -234,8 +240,25 @@ export default function SignUp({ className, ...props }: SignUpProps) {
                                 >
                                     Konto
                                 </Link>{" "}
-                                oder hast dein Passwort vergessen?
-                            </p>
+                                oder hast dein{" "}
+                                <TooltipProvider>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Link
+                                                href="#"
+                                                className="underline underline-offset-4 hover:text-primary"
+                                            >
+                                                Passwort vergessen
+                                            </Link>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            Diese Funktion ist noch nicht
+                                            implementiert.
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                                ?
+                            </div>
                         </div>
                     </form>
                 </Form>
