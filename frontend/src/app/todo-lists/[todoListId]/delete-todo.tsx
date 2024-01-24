@@ -86,7 +86,6 @@ export default function DeleteTodo({ todoListId, todo }: DeleteTodoProps) {
                 <Button
                     className="px-1"
                     variant="link"
-                    disabled={todo?.completed}
                 >
                     löschen
                 </Button>

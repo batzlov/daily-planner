@@ -159,7 +159,6 @@ export default function UpdateTodo({ todoListId, todo }: UpdateTodoProps) {
                 <Button
                     className="px-1"
                     variant="link"
-                    disabled={todo?.completed}
                 >
                     bearbeiten
                 </Button>
