@@ -16,7 +16,7 @@ export function fetcher(url: string, jwt: string) {
         const json = await res.json();
         if (res.ok) {
             return json.data;
-        } else if (res.status === 404) {
+        } else if (res.status === 403 || res.status === 404) {
             const error: any = new Error(
                 "The requested resource could not be found."
             );

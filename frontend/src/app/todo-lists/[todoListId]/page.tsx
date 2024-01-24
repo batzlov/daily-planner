@@ -45,7 +45,7 @@ export default function Details({ params }: DetailsProps) {
     );
     const { mutate } = useSWRConfig();
     const { toast } = useToast();
-    const { replace } = useRouter();
+    const { push } = useRouter();
     const [listIsSortable, setListIsSortable] = useState(false);
     const [sortableTodos, setSortableTodos] = useState<any>([]);
     const { state: authState, dispatch } = useAuthContext();
@@ -56,10 +56,6 @@ export default function Details({ params }: DetailsProps) {
         ],
         ([url, jwt]) => fetcher(url, jwt)
     );
-
-    if (error) {
-        replace("/todo-lists");
-    }
 
     function handleDragEnd(event: any) {
         const { active, over } = event;
@@ -267,7 +263,8 @@ export default function Details({ params }: DetailsProps) {
                     <div
                         className={classNames({
                             "mt-12": data?.todos?.length === 0,
-                            hidden: data?.todos?.length > 0 || isLoading,
+                            hidden:
+                                data?.todos?.length > 0 || isLoading || error,
                         })}
                     >
                         <Alert>
@@ -278,6 +275,18 @@ export default function Details({ params }: DetailsProps) {
                             </AlertDescription>
                         </Alert>
                     </div>
+                    {error && (
+                        <div className="mt-12">
+                            <Alert>
+                                <AlertTitle>Oh :o</AlertTitle>
+                                <AlertDescription>
+                                    Diese Todo-Liste existiert nicht oder du
+                                    hast nicht die nötigen Berechtigungen um sie
+                                    anzuzeigen.
+                                </AlertDescription>
+                            </Alert>
+                        </div>
+                    )}
                 </div>
             </div>
         </>
