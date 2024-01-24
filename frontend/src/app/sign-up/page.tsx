@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import wretch from "wretch";
@@ -69,6 +69,7 @@ const signUpSchema = z
 
 export default function SignUp({ className, ...props }: SignUpProps) {
     const { toast } = useToast();
+    const { push } = useRouter();
     const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
     type SignUpSchemaType = z.infer<typeof signUpSchema>;
@@ -105,7 +106,7 @@ export default function SignUp({ className, ...props }: SignUpProps) {
                 form.reset();
 
                 setTimeout(() => {
-                    redirect("/sign-in");
+                    push("/sign-in");
                 }, 3000);
             })
             .catch((error) => {

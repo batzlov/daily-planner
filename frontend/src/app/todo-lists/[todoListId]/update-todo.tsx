@@ -144,7 +144,16 @@ export default function UpdateTodo({ todoListId, todo }: UpdateTodoProps) {
     return (
         <Dialog
             open={open}
-            onOpenChange={setOpen}
+            onOpenChange={() => {
+                setOpen(!open);
+
+                // prevent errors as a result of the category data not being loaded yet
+                const category =
+                    categoryData?.find((category: any) => {
+                        return category.id === todo.categoryId;
+                    }).title || "";
+                form.setValue("category", category);
+            }}
         >
             <DialogTrigger asChild>
                 <Button
