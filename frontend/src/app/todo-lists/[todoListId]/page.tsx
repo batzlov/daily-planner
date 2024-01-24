@@ -21,6 +21,7 @@ import {
     verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import classNames from "classnames";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import useSWR, { useSWRConfig } from "swr";
 import wretch from "wretch";
@@ -44,6 +45,7 @@ export default function Details({ params }: DetailsProps) {
     );
     const { mutate } = useSWRConfig();
     const { toast } = useToast();
+    const { replace } = useRouter();
     const [listIsSortable, setListIsSortable] = useState(false);
     const [sortableTodos, setSortableTodos] = useState<any>([]);
     const { state: authState, dispatch } = useAuthContext();
@@ -54,6 +56,10 @@ export default function Details({ params }: DetailsProps) {
         ],
         ([url, jwt]) => fetcher(url, jwt)
     );
+
+    if (error) {
+        replace("/todo-lists");
+    }
 
     function handleDragEnd(event: any) {
         const { active, over } = event;
