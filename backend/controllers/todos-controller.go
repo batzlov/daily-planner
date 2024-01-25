@@ -136,7 +136,7 @@ func UpdateTodo(context *gin.Context) {
 	}
 	
 	var todoToUpdate models.Todo
-	initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).Preload("TodoList").First(&todoToUpdate)
+	initializers.DATABASE.Where("id = ? AND todo_list_id = ?", params.TodoId, params.TodoListId).First(&todoToUpdate)
 	if todoToUpdate.ID == 0 {
 		context.JSON(http.StatusNotFound, gin.H {
 			"code": "not-found",
