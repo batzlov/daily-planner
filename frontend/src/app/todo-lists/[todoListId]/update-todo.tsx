@@ -120,6 +120,8 @@ export default function UpdateTodo({ todoListId, todo }: UpdateTodoProps) {
                 setOpen(false);
                 form.reset();
                 form.setValue("title", values.title);
+                form.setValue("description", values.description);
+
                 mutate([
                     `${process.env.baseUrl}/todo-lists/${todoListId}`,
                     authState.jwt,
